@@ -1,0 +1,83 @@
+package com.ugg.client.kit.navigation.presentation.external.view
+
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
+import com.ugg.client.kit.auth.domain.entities.AuthFlow
+import com.ugg.client.kit.auth.presentation.external.view.InitiateScreen
+import com.ugg.client.kit.auth.presentation.external.view.OtpScreen
+import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
+import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
+import com.ugg.client.kit.splash.domain.entities.SplashDestination
+import com.ugg.client.kit.splash.domain.entities.SplashFlow
+import com.ugg.client.kit.splash.presentation.external.view.SplashScreen
+import com.ugg.client.kit.splash.presentation.external.view.models.SplashViewModel
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
+import org.kodein.di.compose.localDI
+import org.kodein.di.compose.viewmodel.rememberViewModel
+import org.kodein.di.instance
+
+@OptIn(ExperimentalSerializationApi::class)
+@Composable
+fun NavigationScreen() {
+    val di = localDI()
+    val navigationContext: NavigationContext by di.instance()
+
+    // Held by the host, not by the splash entry: it decides the first destination and keeps
+    // listening for authorization events long after the splash leaves the back stack.
+    val splashViewModel: SplashViewModel by rememberViewModel()
+    val splashState by splashViewModel.state.collectAsState()
+
+    val config = SavedStateConfiguration {
+        serializersModule = SerializersModule {
+            polymorphic(NavKey::class) {
+                subclass(SplashDestination.Splash::class, SplashDestination.Splash.serializer())
+                subclass(SplashFlow.Auth::class, SplashFlow.Auth.serializer())
+                subclass(SplashFlow.Launch::class, SplashFlow.Launch.serializer())
+                subclass(AuthFlow.Otp::class, AuthFlow.Otp.serializer())
+            }
+        }
+    }
+
+    val backStack = rememberNavBackStack(config, SplashDestination.Splash)
+
+    LaunchedEffect(Unit) {
+        navigationContext.events.collect { event ->
+            when (event) {
+                is NavigationEvent.OnNavigate -> {
+                    with(event) { backStack.block() }
+                    backStack.add(event.route)
+                }
+                is NavigationEvent.OnBack -> backStack.removeLastOrNull()
+            }
+        }
+    }
+
+    NavDisplay(
+        backStack = backStack,
+        entryProvider = entryProvider {
+            entry<SplashDestination.Splash> {
+                SplashScreen(error = splashState.error, onRetry = { splashViewModel.fetch() })
+            }
+            entry<SplashFlow.Auth> {
+                InitiateScreen()
+            }
+            entry<SplashFlow.Launch> {
+                Text("Welcome! Replace with HomeScreen")
+            }
+            entry<AuthFlow.Otp> {
+                OtpScreen(it.phone, it.sessionId)
+            }
+        }
+    )
+}
