@@ -2,7 +2,7 @@ package com.ugg.client.kit.auth.presentation.external.view.models
 
 import com.ugg.client.kit.auth.domain.entities.AuthFlow
 import com.ugg.client.kit.auth.domain.useCases.AuthUseCase
-import com.ugg.client.kit.auth.presentation.external.states.InitiateState
+import com.ugg.client.kit.auth.domain.states.InitiateState
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
 import kotlinx.coroutines.Dispatchers

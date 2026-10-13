@@ -1,7 +1,7 @@
 package com.ugg.client.kit.auth.presentation.external.view.models
 
 import com.ugg.client.kit.auth.domain.useCases.AuthUseCase
-import com.ugg.client.kit.auth.presentation.external.states.OtpState
+import com.ugg.client.kit.auth.domain.states.OtpState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -15,7 +15,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class OtpViewModelTest {

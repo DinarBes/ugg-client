@@ -1,4 +1,4 @@
-package com.ugg.client.kit.auth.presentation.external.states
+package com.ugg.client.kit.auth.domain.states
 
 data class InitiateState(
     val phone: String = "",
