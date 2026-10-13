@@ -5,6 +5,7 @@ import com.ugg.client.infrastructure.api.core.TemplateCore
 import com.ugg.client.infrastructure.keystore.foundation.external.Keystore
 import com.ugg.client.infrastructure.keystore.session.AccessService
 import com.ugg.client.kit.auth.presentation.external.authModule
+import com.ugg.client.kit.cart.presentation.external.cartModule
 import com.ugg.client.kit.core.data.coreDataModule
 import com.ugg.client.kit.core.domain.AppEnvironment
 import com.ugg.client.kit.core.domain.resolve
@@ -78,6 +79,7 @@ class TemplateApp(block: TemplateAppBuilder.() -> Unit = {}) {
             import(productModule)
             import(storyModule)
             import(storesModule)
+            import(cartModule)
         }
     }
 

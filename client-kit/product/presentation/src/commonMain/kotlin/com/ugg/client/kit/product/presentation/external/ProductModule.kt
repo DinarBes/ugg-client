@@ -12,7 +12,7 @@ import org.kodein.di.instance
 val productModule: DI.Module
     get() = DI.Module("product.module") {
         bind<ProductViewModel>() with factory {
-            ProductViewModel(instance())
+            ProductViewModel(instance(), instance())
         }
 
         bind<ProductUseCase>() with factory {

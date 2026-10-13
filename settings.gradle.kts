@@ -58,6 +58,10 @@ listOf(
     Module(":client-kit:stores-data", "client-kit/stores/data"),
     Module(":client-kit:stores-domain", "client-kit/stores/domain"),
     Module(":client-kit:stores-presentation", "client-kit/stores/presentation"),
+
+    Module(":client-kit:cart-data", "client-kit/cart/data"),
+    Module(":client-kit:cart-domain", "client-kit/cart/domain"),
+    Module(":client-kit:cart-presentation", "client-kit/cart/presentation"),
 ).forEach {
     include(it.name)
     project(it.name).projectDir = file(it.path)

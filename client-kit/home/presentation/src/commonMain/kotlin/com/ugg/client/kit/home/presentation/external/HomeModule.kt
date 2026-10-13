@@ -12,7 +12,7 @@ import org.kodein.di.instance
 val homeModule: DI.Module
     get() = DI.Module("home.module") {
         bind<HomeViewModel>() with factory {
-            HomeViewModel(instance())
+            HomeViewModel(instance(), instance())
         }
 
         bind<HomeUseCase>() with factory {

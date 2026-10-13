@@ -45,6 +45,7 @@ androidx-runner = { module = "androidx.test:runner", version.ref = "androidx-tes
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "androidx-security-crypto-version" }
 
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin-version" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines-version" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlin-coroutines-version" }
 
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform-version" }

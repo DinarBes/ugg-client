@@ -6,6 +6,8 @@ data class Product(
     val title: String = "",
     /** Already formatted: «14 900 ₽». */
     val price: String = "",
+    /** Rubles — what the cart adds up. */
+    val priceValue: Int = 0,
     /** «Сошьём за 5–7 дней». */
     val leadTime: String = "",
     val description: String = "",
@@ -24,6 +26,7 @@ data class Product(
             kicker = "Ручная работа · Байкал",
             title = "Классика",
             price = "14 900 ₽",
+            priceValue = 14900,
             leadTime = "Сошьём за 5–7 дней",
             description = "Высокие угги из цельной овчины с густым мехом внутри. Держат тепло в байкальские морозы и дышат в оттепель. Каждую пару шьёт один мастер — от раскроя до последнего стежка.",
             photoCount = 10,

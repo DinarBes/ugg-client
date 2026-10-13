@@ -15,7 +15,7 @@ data class UggSpacing(
     val xl: Dp = 24.dp,
     val xxl: Dp = 28.dp,
     /** Horizontal padding of every screen. */
-    val screenHorizontal: Dp = 20.dp,
+    val screenHorizontal: Dp = 16.dp,
     /** Vertical gap between screen sections. */
     val section: Dp = 28.dp,
     /** Height of primary buttons. */

@@ -12,6 +12,8 @@ kotlin {
             implementation(projects.clientKit.homeData)
             implementation(projects.clientKit.homeDomain)
 
+            implementation(projects.clientKit.cartDomain)
+
             implementation(projects.clientKit.coreDomain)
             implementation(projects.clientKit.corePresentation)
         }

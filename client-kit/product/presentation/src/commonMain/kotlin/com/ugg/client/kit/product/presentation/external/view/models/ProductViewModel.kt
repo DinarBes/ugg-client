@@ -3,6 +3,8 @@ package com.ugg.client.kit.product.presentation.external.view.models
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.ugg.client.kit.cart.domain.entities.CartProduct
+import com.ugg.client.kit.cart.domain.useCases.CartUseCase
 import com.ugg.client.kit.product.domain.entities.Product
 import com.ugg.client.kit.product.domain.states.ProductState
 import com.ugg.client.kit.product.domain.useCases.ProductUseCase
@@ -17,6 +19,7 @@ import org.kodein.di.instance
 
 class ProductViewModel(
     private val useCase: ProductUseCase,
+    private val cartUseCase: CartUseCase,
 ) : ViewModel() {
     val state: StateFlow<ProductState>
         field = MutableStateFlow(ProductState())
@@ -54,6 +57,31 @@ class ProductViewModel(
     /** Opens [index], or collapses it if it is already open — one block at a time. */
     fun toggleDetail(index: Int) = state.update {
         it.copy(expandedDetail = if (it.expandedDetail == index) null else index)
+    }
+
+    /**
+     * Puts the current selection into the cart, then calls [next] (the host opens the cart).
+     * Does nothing until a size is picked — the button is disabled then anyway.
+     */
+    fun addToCart(next: () -> Unit) = viewModelScope.launch(unexpectedExceptionHandler) {
+        val current = state.value
+        val product = current.product ?: return@launch
+        val selection = current.selection.takeIf { it.isComplete } ?: return@launch
+
+        val shade = product.shades.firstOrNull { it.id == selection.shadeId }
+        val height = product.heights.firstOrNull { it.id == selection.heightId }
+
+        cartUseCase.addProduct(
+            CartProduct(
+                // The same model with the same options is one cart line: adding it again raises the quantity.
+                id = listOf(product.id, selection.shadeId, selection.heightId, selection.size).joinToString("-"),
+                title = product.title,
+                details = listOfNotNull(shade?.name, selection.size, height?.name).joinToString(" · "),
+                unitPrice = product.priceValue,
+            ),
+        )
+
+        next()
     }
 
     /**

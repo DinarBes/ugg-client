@@ -1,10 +1,15 @@
 package com.ugg.client.kit.home.presentation.external.view.models
 
+import com.ugg.client.kit.cart.domain.entities.Cart
+import com.ugg.client.kit.cart.domain.entities.CartProduct
+import com.ugg.client.kit.cart.domain.useCases.CartUseCase
 import com.ugg.client.kit.home.domain.entities.Home
 import com.ugg.client.kit.home.domain.entities.HomeHero
 import com.ugg.client.kit.home.domain.useCases.HomeUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -26,7 +31,7 @@ class HomeViewModelTest {
 
     @Test
     fun fetchShowsHome() = runTest {
-        val vm = HomeViewModel(SuccessUseCase())
+        val vm = HomeViewModel(SuccessUseCase(), FakeCartUseCase())
         advanceUntilIdle()
 
         assertEquals("Классика", vm.state.value.home?.hero?.title)
@@ -36,7 +41,7 @@ class HomeViewModelTest {
 
     @Test
     fun fetchSetsErrorOnFailure() = runTest {
-        val vm = HomeViewModel(FailureUseCase())
+        val vm = HomeViewModel(FailureUseCase(), FakeCartUseCase())
         advanceUntilIdle()
 
         assertNull(vm.state.value.home)
@@ -47,7 +52,7 @@ class HomeViewModelTest {
     @Test
     fun retryAfterFailureClearsTheError() = runTest {
         val useCase = FlakyUseCase()
-        val vm = HomeViewModel(useCase)
+        val vm = HomeViewModel(useCase, FakeCartUseCase())
         advanceUntilIdle()
 
         vm.fetch()
@@ -55,6 +60,23 @@ class HomeViewModelTest {
 
         assertNull(vm.state.value.error)
         assertEquals("Классика", vm.state.value.home?.hero?.title)
+    }
+
+    @Test
+    fun cartCountFollowsTheCart() = runTest {
+        val vm = HomeViewModel(SuccessUseCase(), FakeCartUseCase(itemCount = 2))
+        advanceUntilIdle()
+
+        assertEquals(2, vm.state.value.cartCount)
+    }
+
+    private class FakeCartUseCase(private val itemCount: Int = 0) : CartUseCase {
+        override fun observeCart(): Flow<Cart> = flowOf(Cart(itemCount = itemCount))
+        override suspend fun addProduct(product: CartProduct) = Unit
+        override suspend fun addExtra(id: String) = Unit
+        override suspend fun changeQuantity(lineId: String, delta: Int) = Unit
+        override suspend fun selectDelivery(id: String) = Unit
+        override suspend fun setGiftWrap(enabled: Boolean) = Unit
     }
 
     private class SuccessUseCase : HomeUseCase {

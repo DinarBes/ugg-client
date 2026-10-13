@@ -3,6 +3,7 @@ package com.ugg.client.kit.home.presentation.external.view.models
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.ugg.client.kit.cart.domain.useCases.CartUseCase
 import com.ugg.client.kit.home.domain.entities.Home
 import com.ugg.client.kit.home.domain.states.HomeState
 import com.ugg.client.kit.home.domain.useCases.HomeUseCase
@@ -17,6 +18,7 @@ import org.kodein.di.instance
 
 class HomeViewModel(
     private val useCase: HomeUseCase,
+    private val cartUseCase: CartUseCase,
 ) : ViewModel() {
     val state: StateFlow<HomeState>
         field = MutableStateFlow(HomeState())
@@ -29,6 +31,7 @@ class HomeViewModel(
 
     init {
         fetch()
+        observeCart()
     }
 
     fun fetch() = viewModelScope.launch(unexpectedExceptionHandler) {
@@ -39,6 +42,10 @@ class HomeViewModel(
         } finally {
             state.update { it.copy(isLoading = false) }
         }
+    }
+
+    private fun observeCart() = viewModelScope.launch(unexpectedExceptionHandler) {
+        cartUseCase.observeCart().collect { cart -> state.update { it.copy(cartCount = cart.itemCount) } }
     }
 
     private fun show(home: Home) = state.update { it.copy(home = home) }

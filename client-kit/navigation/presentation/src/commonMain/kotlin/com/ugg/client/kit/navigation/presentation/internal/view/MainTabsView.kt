@@ -36,6 +36,7 @@ internal fun MainTabsView(
     selected: MainTab,
     onSelect: (MainTab) -> Unit,
     onOpenStory: () -> Unit,
+    onOpenCart: () -> Unit,
 ) {
     val tabs = MainTab.entries
 
@@ -55,11 +56,12 @@ internal fun MainTabsView(
                 onChooseModel = { onSelect(MainTab.Model) },
                 onOpenStores = { onSelect(MainTab.Stores) },
                 onOpenStory = onOpenStory,
+                onOpenCart = onOpenCart,
             )
 
             MainTab.Model -> ProductScreen(
                 contentPadding = padding,
-                onAddToCart = {},
+                onAddToCart = onOpenCart,
             )
 
             MainTab.Stores -> StoresScreen(contentPadding = padding)

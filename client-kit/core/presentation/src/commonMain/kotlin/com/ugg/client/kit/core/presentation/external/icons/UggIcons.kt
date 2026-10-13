@@ -87,6 +87,20 @@ object UggIcons {
         )
     }
 
+    val Plus by lazy { lineIcon("Plus", "M5 12h14", "M12 5v14") }
+
+    val Minus by lazy { lineIcon("Minus", "M5 12h14") }
+
+    val Gift by lazy {
+        lineIcon(
+            "Gift",
+            "M4 8h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z",
+            "M12 8v13",
+            "M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7",
+            "M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5",
+        )
+    }
+
     private fun circle(cx: Float, cy: Float, r: Float): String =
         "M${cx - r} ${cy}a$r $r 0 1 0 ${2 * r} 0a$r $r 0 1 0 ${-2 * r} 0"
 

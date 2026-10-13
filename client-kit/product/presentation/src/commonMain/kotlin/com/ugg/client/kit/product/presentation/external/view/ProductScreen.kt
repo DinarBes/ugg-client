@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.ugg.client.kit.product.domain.entities.ProductSelection
 import com.ugg.client.kit.product.presentation.external.view.models.ProductViewModel
 import com.ugg.client.kit.product.presentation.internal.view.ProductView
 import org.kodein.di.compose.viewmodel.rememberViewModel
@@ -15,12 +14,12 @@ import org.kodein.di.compose.viewmodel.rememberViewModel
  * @param contentPadding insets from the host; the gallery ignores the top one and goes under the
  *   status bar, the bottom one keeps the «В корзину» bar above the tab bar.
  * @param onBack `null` hides the back button — e.g. when the screen is a tab.
- * @param onAddToCart called with a complete selection only.
+ * @param onAddToCart called once the selection is in the cart.
  */
 @Composable
 fun ProductScreen(
     contentPadding: PaddingValues,
-    onAddToCart: (ProductSelection) -> Unit,
+    onAddToCart: () -> Unit,
     onBack: (() -> Unit)? = null,
     onShare: () -> Unit = {},
     onToggleFavorite: () -> Unit = {},
@@ -45,6 +44,6 @@ fun ProductScreen(
         onSelectSize = { viewModel.selectSize(it) },
         onOpenSizeChart = onOpenSizeChart,
         onToggleDetail = { viewModel.toggleDetail(it) },
-        onAddToCart = { if (state.selection.isComplete) onAddToCart(state.selection) },
+        onAddToCart = { viewModel.addToCart(onAddToCart) },
     )
 }

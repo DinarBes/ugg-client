@@ -25,6 +25,7 @@ import com.ugg.client.kit.home.domain.entities.Home
 @Composable
 internal fun HomeView(
     home: Home?,
+    cartCount: Int,
     isLoading: Boolean,
     error: Throwable?,
     contentPadding: PaddingValues,
@@ -39,6 +40,7 @@ internal fun HomeView(
     when {
         home != null -> HomeContent(
             home = home,
+            cartCount = cartCount,
             contentPadding = contentPadding,
             onChooseModel = onChooseModel,
             onOpenStores = onOpenStores,
@@ -59,6 +61,7 @@ internal fun HomeView(
 @Composable
 private fun HomeContent(
     home: Home,
+    cartCount: Int,
     contentPadding: PaddingValues,
     onChooseModel: () -> Unit,
     onOpenStores: () -> Unit,
@@ -78,7 +81,7 @@ private fun HomeContent(
             bottom = contentPadding.calculateBottomPadding() + UggTheme.spacing.xxl,
         ),
     ) {
-        item(key = "header") { HomeHeader(onOpenFavorites = onOpenFavorites, onOpenCart = onOpenCart) }
+        item(key = "header") { HomeHeader(cartCount = cartCount, onOpenFavorites = onOpenFavorites, onOpenCart = onOpenCart) }
         item(key = "hero") { HeroSection(hero = home.hero, onChooseModel = onChooseModel) }
 
         if (home.stats.isNotEmpty()) {

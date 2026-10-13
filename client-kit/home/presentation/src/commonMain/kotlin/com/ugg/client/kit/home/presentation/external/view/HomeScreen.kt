@@ -29,6 +29,7 @@ fun HomeScreen(
 
     HomeView(
         home = state.home,
+        cartCount = state.cartCount,
         isLoading = state.isLoading,
         error = state.error,
         contentPadding = contentPadding,

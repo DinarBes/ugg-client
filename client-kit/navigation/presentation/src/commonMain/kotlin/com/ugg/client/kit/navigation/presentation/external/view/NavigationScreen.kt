@@ -15,6 +15,8 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import com.ugg.client.kit.auth.domain.entities.AuthFlow
 import com.ugg.client.kit.auth.presentation.external.view.InitiateScreen
 import com.ugg.client.kit.auth.presentation.external.view.OtpScreen
+import com.ugg.client.kit.cart.domain.entities.CartFlow
+import com.ugg.client.kit.cart.presentation.external.view.CartScreen
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
 import com.ugg.client.kit.navigation.presentation.internal.view.MainTab
@@ -29,7 +31,6 @@ import com.ugg.client.kit.story.presentation.external.view.StoryScreen
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import org.kodein.di.compose.localDI
 import org.kodein.di.compose.viewmodel.rememberViewModel
 import org.kodein.di.instance
@@ -54,6 +55,7 @@ fun NavigationScreen() {
                 subclass(SplashFlow.Launch::class, SplashFlow.Launch.serializer())
                 subclass(AuthFlow.Otp::class, AuthFlow.Otp.serializer())
                 subclass(StoryFlow.Story::class, StoryFlow.Story.serializer())
+                subclass(CartFlow.Cart::class, CartFlow.Cart.serializer())
             }
         }
     }
@@ -93,6 +95,7 @@ fun NavigationScreen() {
                     selected = selectedTab,
                     onSelect = { selectedTab = it },
                     onOpenStory = { navigationContext.tryNavigate(StoryFlow.Story) },
+                    onOpenCart = { navigationContext.tryNavigate(CartFlow.Cart) },
                 )
             }
             entry<StoryFlow.Story> {
@@ -102,6 +105,18 @@ fun NavigationScreen() {
                         selectedTab = MainTab.Model
                         navigationContext.back()
                     },
+                )
+            }
+            entry<CartFlow.Cart> {
+                CartScreen(
+                    onBack = { navigationContext.back() },
+                    onChooseModel = {
+                        selectedTab = MainTab.Model
+                        navigationContext.back()
+                    },
+                    // TODO: checkout — ask for the phone (SplashFlow.Auth) and create the order once
+                    // the orders backend exists.
+                    onCheckout = {},
                 )
             }
             entry<AuthFlow.Otp> {
