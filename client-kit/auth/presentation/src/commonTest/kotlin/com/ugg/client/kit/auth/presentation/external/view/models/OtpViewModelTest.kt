@@ -68,6 +68,25 @@ class OtpViewModelTest {
         assertEquals(SESSION_ID, useCase.sessionId)
     }
 
+    @Test
+    fun resendSwitchesToTheNewSession() = runTest {
+        val useCase = RecordingUseCase(newSessionId = "resent-session")
+        val vm = OtpViewModel(useCase)
+        vm.onStateChange(vm.state.value.copy(otp = "12"))
+
+        vm.resend("+79001234567")
+        advanceUntilIdle()
+
+        assertEquals("", vm.state.value.otp)
+        assertEquals(1, vm.state.value.resendCount)
+
+        vm.onStateChange(vm.state.value.copy(otp = "123456"))
+        vm.onSubmit(SESSION_ID)
+        advanceUntilIdle()
+
+        assertEquals("resent-session", useCase.sessionId)
+    }
+
     private class SuccessUseCase : AuthUseCase {
         override suspend fun initiate(phone: String): String = SESSION_ID
         override suspend fun login(otp: String, sessionId: String) = Unit
@@ -78,10 +97,10 @@ class OtpViewModelTest {
         override suspend fun login(otp: String, sessionId: String) = throw Exception("Invalid OTP")
     }
 
-    private class RecordingUseCase : AuthUseCase {
+    private class RecordingUseCase(private val newSessionId: String = SESSION_ID) : AuthUseCase {
         var sessionId: String? = null
 
-        override suspend fun initiate(phone: String): String = SESSION_ID
+        override suspend fun initiate(phone: String): String = newSessionId
         override suspend fun login(otp: String, sessionId: String) { this.sessionId = sessionId }
     }
 

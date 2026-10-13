@@ -31,6 +31,7 @@ data class CartSnapshot(
         val unitPrice: Int,
         val quantity: Int,
         val isExtra: Boolean,
+        val color: Long? = null,
     )
 
     companion object {

@@ -1,5 +1,7 @@
 package com.ugg.client.kit.cart.presentation.internal.view
 
+import androidx.compose.ui.graphics.Color
+import com.ugg.client.kit.core.presentation.external.components.UggProductImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,10 +49,21 @@ internal fun CartLineCard(line: CartLine, onChangeQuantity: (Int) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        UggPhotoPlaceholder(
-            modifier = if (line.isExtra) Modifier.size(72.dp) else Modifier.size(width = 88.dp, height = 104.dp),
-            shape = UggTheme.shapes.small,
-        )
+        if (line.isExtra) {
+            UggPhotoPlaceholder(modifier = Modifier.size(72.dp), shape = UggTheme.shapes.small)
+        } else {
+            UggPhotoPlaceholder(
+                modifier = Modifier.size(width = 88.dp, height = 104.dp),
+                shape = UggTheme.shapes.small,
+                top = colors.background,
+                bottom = colors.surface,
+            ) {
+                UggProductImage(
+                    modifier = Modifier.align(Alignment.Center).padding(2.dp).fillMaxWidth(),
+                    color = line.color?.let { Color(it) },
+                )
+            }
+        }
 
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(

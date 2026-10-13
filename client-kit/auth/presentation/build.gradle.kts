@@ -15,6 +15,8 @@ kotlin {
             implementation(projects.clientKit.navigationDomain)
             implementation(projects.infrastructure.apiCore)
             implementation(projects.infrastructure.apiAuth)
+
+            implementation(projects.clientKit.corePresentation)
         }
     }
 }

@@ -9,4 +9,6 @@ data class CartLine(
     val quantity: Int = 1,
     /** Accessory from «Добавить к заказу» rather than the boots themselves. */
     val isExtra: Boolean = false,
+    /** ARGB of the sheepskin for the boots line; `null` for accessories. */
+    val color: Long? = null,
 )

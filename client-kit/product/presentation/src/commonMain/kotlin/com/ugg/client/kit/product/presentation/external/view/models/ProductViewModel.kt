@@ -78,6 +78,7 @@ class ProductViewModel(
                 title = product.title,
                 details = listOfNotNull(shade?.name, selection.size, height?.name).joinToString(" · "),
                 unitPrice = product.priceValue,
+                color = shade?.color,
             ),
         )
 

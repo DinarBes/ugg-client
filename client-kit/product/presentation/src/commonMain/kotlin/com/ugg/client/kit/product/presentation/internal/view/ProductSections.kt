@@ -1,5 +1,6 @@
 package com.ugg.client.kit.product.presentation.internal.view
 
+import com.ugg.client.kit.core.presentation.external.components.UggProductImage
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,12 +51,9 @@ import kotlinx.coroutines.launch
 private const val VISIBLE_THUMBNAILS = 4
 private const val SIZES_PER_ROW = 6
 
-/** Placeholder gradient tinted with the selected sheepskin color, so switching colors is visible. */
-private fun tintedTop(tint: Long?, fallback: Color): Color =
-    tint?.let { lerp(Color(it), Color.White, 0.7f) } ?: fallback
-
-private fun tintedBottom(tint: Long?, fallback: Color): Color =
-    tint?.let { lerp(Color(it), Color.White, 0.15f) } ?: fallback
+/** Light backdrop with a hint of the selected sheepskin color under the cut-out photo. */
+private fun backdropBottom(tint: Long?, fallback: Color): Color =
+    tint?.let { lerp(Color(it), fallback, 0.75f) } ?: fallback
 
 @Composable
 internal fun ProductGallery(
@@ -73,9 +71,17 @@ internal fun ProductGallery(
             UggPhotoPlaceholder(
                 modifier = Modifier.fillMaxSize(),
                 shape = RectangleShape,
-                top = tintedTop(tint, colors.surface),
-                bottom = tintedBottom(tint, colors.accent),
-            )
+                top = colors.background,
+                bottom = backdropBottom(tint, colors.surface),
+            ) {
+                UggProductImage(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = UggTheme.spacing.xs)
+                        .fillMaxWidth(),
+                    color = tint?.let { Color(it) },
+                )
+            }
         }
 
         Row(
@@ -137,9 +143,14 @@ internal fun ProductThumbnails(photoCount: Int, pagerState: PagerState, tint: Lo
                     .clip(UggTheme.shapes.small)
                     .clickable { scope.launch { pagerState.animateScrollToPage(index) } },
                 shape = UggTheme.shapes.small,
-                top = tintedTop(tint, colors.surface),
-                bottom = tintedBottom(tint, colors.accent),
-            )
+                top = colors.background,
+                bottom = backdropBottom(tint, colors.surface),
+            ) {
+                UggProductImage(
+                    modifier = Modifier.align(Alignment.Center).padding(2.dp).fillMaxWidth(),
+                    color = tint?.let { Color(it) },
+                )
+            }
         }
 
         if (hidden > 0) {

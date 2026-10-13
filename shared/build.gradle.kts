@@ -58,6 +58,10 @@ kotlin {
         projects.clientKit.cartData,
         projects.clientKit.cartDomain,
         projects.clientKit.cartPresentation,
+
+        projects.clientKit.profileData,
+        projects.clientKit.profileDomain,
+        projects.clientKit.profilePresentation,
     )
 
     targets.filterIsInstance<KotlinNativeTarget>().forEach { target ->

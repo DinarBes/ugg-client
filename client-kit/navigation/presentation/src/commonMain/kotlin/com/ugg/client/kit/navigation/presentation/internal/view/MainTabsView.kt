@@ -1,15 +1,8 @@
 package com.ugg.client.kit.navigation.presentation.internal.view
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ugg.client.kit.core.presentation.external.components.UggTabBar
 import com.ugg.client.kit.core.presentation.external.components.UggTabItem
@@ -17,6 +10,7 @@ import com.ugg.client.kit.core.presentation.external.icons.UggIcons
 import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 import com.ugg.client.kit.home.presentation.external.view.HomeScreen
 import com.ugg.client.kit.product.presentation.external.view.ProductScreen
+import com.ugg.client.kit.profile.presentation.external.view.ProfileScreen
 import com.ugg.client.kit.stores.presentation.external.view.StoresScreen
 
 internal enum class MainTab(val label: String, val icon: () -> ImageVector) {
@@ -66,26 +60,7 @@ internal fun MainTabsView(
 
             MainTab.Stores -> StoresScreen(contentPadding = padding)
 
-            else -> TabPlaceholder(tab = selected, contentPadding = padding)
+            MainTab.Profile -> ProfileScreen(contentPadding = padding)
         }
-    }
-}
-
-@Composable
-private fun TabPlaceholder(tab: MainTab, contentPadding: PaddingValues) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding)
-            .padding(horizontal = UggTheme.spacing.screenHorizontal),
-        verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.xs, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = tab.label, style = UggTheme.typography.displayL, color = UggTheme.colors.content)
-        Text(
-            text = "Экран скоро появится",
-            style = UggTheme.typography.body,
-            color = UggTheme.colors.contentSecondary,
-        )
     }
 }

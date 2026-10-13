@@ -1,5 +1,6 @@
 package com.ugg.client.kit.home.presentation.internal.view
 
+import com.ugg.client.kit.core.presentation.external.components.UggProductImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -86,6 +87,14 @@ internal fun HeroSection(hero: HomeHero, onChooseModel: () -> Unit) {
         top = colors.surfaceVariant,
         bottom = colors.surfaceInverse,
     ) {
+        UggProductImage(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = UggTheme.spacing.m)
+                // Leaves the lower half of the card to the copy over the dark gradient.
+                .fillMaxWidth(0.82f),
+            contentDescription = hero.title,
+        )
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -178,9 +187,18 @@ private fun ShadeCard(shade: Shade, onClick: () -> Unit) {
         UggPhotoPlaceholder(
             modifier = Modifier.size(width = 150.dp, height = 190.dp),
             shape = UggTheme.shapes.medium,
-            top = lerp(color, Color.White, 0.45f),
-            bottom = color,
-        )
+            top = colors.surface,
+            bottom = lerp(color, colors.surface, 0.75f),
+        ) {
+            UggProductImage(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(4.dp)
+                    .fillMaxWidth(),
+                color = color,
+                contentDescription = shade.name,
+            )
+        }
         Column {
             Text(text = shade.name, style = UggTheme.typography.label, color = colors.content)
             Text(

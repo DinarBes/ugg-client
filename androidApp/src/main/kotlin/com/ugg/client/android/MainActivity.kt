@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.ugg.client.infrastructure.api.core.TemplateCore
-import com.ugg.client.infrastructure.keystore.foundation.external.InMemoryKeystore
 import com.ugg.client.kit.core.domain.AppEnvironment
 import com.ugg.client.shared.ContentView
 import com.ugg.client.shared.TemplateApp
@@ -19,7 +18,12 @@ class MainActivity : ComponentActivity() {
 
         val app = TemplateApp {
             environment = AppEnvironment.PRODUCTION
-            keystore = InMemoryKeystore()
+            // Persistent, encrypted storage: tokens and the «onboarding seen» flag survive a
+            // restart. InMemoryKeystore here would forget them every time the app is killed.
+            keystore {
+                context = applicationContext
+                filename = "ugg_client_secure_storage"
+            }
             core = TemplateCore {
                 androidContext = this@MainActivity
             }

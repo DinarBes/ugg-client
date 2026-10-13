@@ -28,6 +28,7 @@ class MockCartUseCase(
                 unitPrice = product.unitPrice,
                 quantity = 1,
                 isExtra = false,
+                color = product.color,
             ),
         )
     }

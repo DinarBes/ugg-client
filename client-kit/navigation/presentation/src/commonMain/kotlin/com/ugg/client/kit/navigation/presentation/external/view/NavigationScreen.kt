@@ -88,7 +88,11 @@ fun NavigationScreen() {
                 )
             }
             entry<SplashFlow.Auth> {
-                InitiateScreen()
+                // Sign-in is optional: back and «Продолжить без входа» both land in the app as a guest.
+                InitiateScreen(
+                    onBack = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
+                    onSkip = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
+                )
             }
             entry<SplashFlow.Launch> {
                 MainTabsView(
@@ -120,7 +124,7 @@ fun NavigationScreen() {
                 )
             }
             entry<AuthFlow.Otp> {
-                OtpScreen(it.phone, it.sessionId)
+                OtpScreen(phone = it.phone, sessionId = it.sessionId, onBack = { navigationContext.back() })
             }
         }
     )

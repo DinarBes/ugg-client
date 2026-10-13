@@ -29,7 +29,7 @@ class InitiateViewModel(
         state.update { it.copy(error = throwable, isLoading = false) }
     }
 
-    fun onStateChange(new: InitiateState) { state.value = new }
+    fun onStateChange(new: InitiateState) = state.update { new }
 
     fun onSubmit() = viewModelScope.launch(unexpectedExceptionHandler) {
         state.update { it.copy(isLoading = true, error = null) }

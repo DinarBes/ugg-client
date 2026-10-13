@@ -9,4 +9,6 @@ data class CartProduct(
     val details: String,
     /** Rubles. */
     val unitPrice: Int,
+    /** ARGB of the chosen sheepskin, to show the photo in that shade. */
+    val color: Long? = null,
 )

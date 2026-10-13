@@ -36,6 +36,7 @@ fun CartSnapshot.toCart(): Cart {
                 price = (it.unitPrice * it.quantity).rubles(),
                 quantity = it.quantity,
                 isExtra = it.isExtra,
+                color = it.color,
             )
         },
         extras = CartCatalog.extras
