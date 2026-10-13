@@ -22,6 +22,9 @@ kotlin {
             implementation(projects.clientKit.homePresentation)
             implementation(projects.clientKit.productDomain)
             implementation(projects.clientKit.productPresentation)
+            implementation(projects.clientKit.storyDomain)
+            implementation(projects.clientKit.storyPresentation)
+            implementation(projects.clientKit.storesPresentation)
 
             implementation(projects.clientKit.corePresentation)
 

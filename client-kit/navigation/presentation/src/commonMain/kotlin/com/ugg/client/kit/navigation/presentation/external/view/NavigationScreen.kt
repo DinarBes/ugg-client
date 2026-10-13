@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -14,12 +17,15 @@ import com.ugg.client.kit.auth.presentation.external.view.InitiateScreen
 import com.ugg.client.kit.auth.presentation.external.view.OtpScreen
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
+import com.ugg.client.kit.navigation.presentation.internal.view.MainTab
 import com.ugg.client.kit.navigation.presentation.internal.view.MainTabsView
 import com.ugg.client.kit.onboarding.presentation.external.view.OnboardingScreen
 import com.ugg.client.kit.splash.domain.entities.SplashDestination
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
 import com.ugg.client.kit.splash.presentation.external.view.SplashScreen
 import com.ugg.client.kit.splash.presentation.external.view.models.SplashViewModel
+import com.ugg.client.kit.story.domain.entities.StoryFlow
+import com.ugg.client.kit.story.presentation.external.view.StoryScreen
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -47,11 +53,13 @@ fun NavigationScreen() {
                 subclass(SplashFlow.Auth::class, SplashFlow.Auth.serializer())
                 subclass(SplashFlow.Launch::class, SplashFlow.Launch.serializer())
                 subclass(AuthFlow.Otp::class, AuthFlow.Otp.serializer())
+                subclass(StoryFlow.Story::class, StoryFlow.Story.serializer())
             }
         }
     }
 
     val backStack = rememberNavBackStack(config, SplashDestination.Splash)
+    var selectedTab by rememberSaveable { mutableStateOf(MainTab.Home) }
 
     LaunchedEffect(Unit) {
         navigationContext.events.collect { event ->
@@ -81,7 +89,20 @@ fun NavigationScreen() {
                 InitiateScreen()
             }
             entry<SplashFlow.Launch> {
-                MainTabsView()
+                MainTabsView(
+                    selected = selectedTab,
+                    onSelect = { selectedTab = it },
+                    onOpenStory = { navigationContext.tryNavigate(StoryFlow.Story) },
+                )
+            }
+            entry<StoryFlow.Story> {
+                StoryScreen(
+                    onBack = { navigationContext.back() },
+                    onChooseModel = {
+                        selectedTab = MainTab.Model
+                        navigationContext.back()
+                    },
+                )
             }
             entry<AuthFlow.Otp> {
                 OtpScreen(it.phone, it.sessionId)

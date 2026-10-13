@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,6 +17,7 @@ import com.ugg.client.kit.core.presentation.external.icons.UggIcons
 import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 import com.ugg.client.kit.home.presentation.external.view.HomeScreen
 import com.ugg.client.kit.product.presentation.external.view.ProductScreen
+import com.ugg.client.kit.stores.presentation.external.view.StoresScreen
 
 internal enum class MainTab(val label: String, val icon: () -> ImageVector) {
     Home("Главная", { UggIcons.Home }),
@@ -32,11 +29,14 @@ internal enum class MainTab(val label: String, val icon: () -> ImageVector) {
 /**
  * The app shell behind [com.ugg.client.kit.splash.domain.entities.SplashFlow.Launch]: tab bar plus
  * the content of the selected tab. Screens pushed on the root back stack cover it, tab bar
- * included.
+ * included. The selected tab is owned by the host so those screens can switch it on their way back.
  */
 @Composable
-internal fun MainTabsView() {
-    var selected by rememberSaveable { mutableStateOf(MainTab.Home) }
+internal fun MainTabsView(
+    selected: MainTab,
+    onSelect: (MainTab) -> Unit,
+    onOpenStory: () -> Unit,
+) {
     val tabs = MainTab.entries
 
     Scaffold(
@@ -45,21 +45,24 @@ internal fun MainTabsView() {
             UggTabBar(
                 items = tabs.map { UggTabItem(it.label, it.icon()) },
                 selectedIndex = selected.ordinal,
-                onSelect = { selected = tabs[it] },
+                onSelect = { onSelect(tabs[it]) },
             )
         },
     ) { padding ->
         when (selected) {
             MainTab.Home -> HomeScreen(
                 contentPadding = padding,
-                onChooseModel = { selected = MainTab.Model },
-                onOpenStores = { selected = MainTab.Stores },
+                onChooseModel = { onSelect(MainTab.Model) },
+                onOpenStores = { onSelect(MainTab.Stores) },
+                onOpenStory = onOpenStory,
             )
 
             MainTab.Model -> ProductScreen(
                 contentPadding = padding,
                 onAddToCart = {},
             )
+
+            MainTab.Stores -> StoresScreen(contentPadding = padding)
 
             else -> TabPlaceholder(tab = selected, contentPadding = padding)
         }

@@ -13,6 +13,8 @@ import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.presentation.external.navigationModule
 import com.ugg.client.kit.onboarding.presentation.external.onboardingModule
 import com.ugg.client.kit.product.presentation.external.productModule
+import com.ugg.client.kit.stores.presentation.external.storesModule
+import com.ugg.client.kit.story.presentation.external.storyModule
 import com.ugg.client.kit.splash.presentation.external.splashModule
 import com.ugg.client.shared.dsl.TemplateAppBuilder
 import io.ktor.client.plugins.auth.providers.BearerTokens
@@ -74,6 +76,8 @@ class TemplateApp(block: TemplateAppBuilder.() -> Unit = {}) {
             import(onboardingModule)
             import(homeModule)
             import(productModule)
+            import(storyModule)
+            import(storesModule)
         }
     }
 
