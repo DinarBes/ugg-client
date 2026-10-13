@@ -10,5 +10,5 @@ import org.kodein.di.instance
 val splashDataModule get() = DI.Module("splash-data") {
     // No AppEnvironment branch: splash reads the keystore in both environments — MOCK swaps the
     // keystore itself (InMemoryKeystore), not the flow that reads it.
-    bind<SplashUseCase>() with factory { SharedSplashRepository(instance(), instance()) }
+    bind<SplashUseCase>() with factory { SharedSplashRepository(instance(), instance(), instance()) }
 }

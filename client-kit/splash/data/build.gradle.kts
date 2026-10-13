@@ -15,9 +15,11 @@ kotlin {
             // so the presentation module must see them to resolve the DI binding.
             api(projects.infrastructure.apiAuth)
             api(projects.infrastructure.keystoreSession)
+            api(projects.clientKit.onboardingDomain)
         }
 
         commonTest.dependencies {
+            implementation(projects.clientKit.onboardingData)
             implementation(projects.infrastructure.apiCore)
             implementation(projects.infrastructure.keystoreFoundation)
         }

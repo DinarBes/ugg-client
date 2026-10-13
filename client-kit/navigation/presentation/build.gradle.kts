@@ -18,6 +18,8 @@ kotlin {
             implementation(projects.clientKit.authDomain)
             implementation(projects.clientKit.authPresentation)
 
+            implementation(projects.clientKit.onboardingPresentation)
+
             implementation(libs.navigation3.ui)
         }
     }

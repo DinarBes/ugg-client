@@ -4,6 +4,7 @@ import com.ugg.client.infrastructure.api.auth.TemplateAuth
 import com.ugg.client.infrastructure.api.auth.context.AuthEvent
 import com.ugg.client.infrastructure.keystore.session.AccessService
 import com.ugg.client.infrastructure.keystore.session.AuthorizationStatus
+import com.ugg.client.kit.onboarding.domain.useCases.OnboardingUseCase
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
 import com.ugg.client.kit.splash.domain.exceptions.KeystoreUnavailableException
 import com.ugg.client.kit.splash.domain.useCases.SplashUseCase
@@ -15,11 +16,14 @@ import kotlin.time.Duration.Companion.seconds
 class SharedSplashRepository(
     private val auth: TemplateAuth,
     private val access: AccessService,
+    private val onboarding: OnboardingUseCase,
 ): SplashUseCase {
     private val context by auth.context
 
     override suspend fun getInitialFlow(): SplashFlow {
         delay(2.seconds)
+
+        if (!onboarding.isCompleted()) return SplashFlow.Onboarding
 
         return when (access.authorizationStatus()) {
             AuthorizationStatus.Authorized -> SplashFlow.Launch

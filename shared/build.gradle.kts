@@ -34,6 +34,10 @@ kotlin {
         projects.clientKit.splashData,
         projects.clientKit.splashDomain,
         projects.clientKit.splashPresentation,
+
+        projects.clientKit.onboardingData,
+        projects.clientKit.onboardingDomain,
+        projects.clientKit.onboardingPresentation,
     )
 
     targets.filterIsInstance<KotlinNativeTarget>().forEach { target ->

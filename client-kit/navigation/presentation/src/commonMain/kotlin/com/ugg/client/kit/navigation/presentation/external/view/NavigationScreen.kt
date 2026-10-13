@@ -15,6 +15,7 @@ import com.ugg.client.kit.auth.presentation.external.view.InitiateScreen
 import com.ugg.client.kit.auth.presentation.external.view.OtpScreen
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
+import com.ugg.client.kit.onboarding.presentation.external.view.OnboardingScreen
 import com.ugg.client.kit.splash.domain.entities.SplashDestination
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
 import com.ugg.client.kit.splash.presentation.external.view.SplashScreen
@@ -42,6 +43,7 @@ fun NavigationScreen() {
         serializersModule = SerializersModule {
             polymorphic(NavKey::class) {
                 subclass(SplashDestination.Splash::class, SplashDestination.Splash.serializer())
+                subclass(SplashFlow.Onboarding::class, SplashFlow.Onboarding.serializer())
                 subclass(SplashFlow.Auth::class, SplashFlow.Auth.serializer())
                 subclass(SplashFlow.Launch::class, SplashFlow.Launch.serializer())
                 subclass(AuthFlow.Otp::class, AuthFlow.Otp.serializer())
@@ -68,6 +70,12 @@ fun NavigationScreen() {
         entryProvider = entryProvider {
             entry<SplashDestination.Splash> {
                 SplashScreen(error = splashState.error, onRetry = { splashViewModel.fetch() })
+            }
+            entry<SplashFlow.Onboarding> {
+                OnboardingScreen(
+                    onStart = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
+                    onLogin = { navigationContext.tryNavigate(SplashFlow.Auth) { clear() } },
+                )
             }
             entry<SplashFlow.Auth> {
                 InitiateScreen()

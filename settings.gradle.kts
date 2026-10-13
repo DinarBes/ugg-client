@@ -38,6 +38,10 @@ listOf(
     Module(":client-kit:splash-data", "client-kit/splash/data"),
     Module(":client-kit:splash-domain", "client-kit/splash/domain"),
     Module(":client-kit:splash-presentation", "client-kit/splash/presentation"),
+
+    Module(":client-kit:onboarding-data", "client-kit/onboarding/data"),
+    Module(":client-kit:onboarding-domain", "client-kit/onboarding/domain"),
+    Module(":client-kit:onboarding-presentation", "client-kit/onboarding/presentation"),
 ).forEach {
     include(it.name)
     project(it.name).projectDir = file(it.path)

@@ -9,6 +9,12 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 @Serializable
 @JsonClassDiscriminator("destination")
 sealed class SplashFlow : Destination() {
+    /** First launch: the user has not seen the onboarding yet. */
+    @Serializable
+    data object Onboarding : SplashFlow() {
+        override val isTabViewVisible = false
+    }
+
     @Serializable
     data object Auth : SplashFlow() {
         override val isTabViewVisible = false

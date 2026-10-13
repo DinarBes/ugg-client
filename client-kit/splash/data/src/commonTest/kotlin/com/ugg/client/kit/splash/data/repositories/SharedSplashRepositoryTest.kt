@@ -2,12 +2,14 @@ package com.ugg.client.kit.splash.data.repositories
 
 import com.ugg.client.infrastructure.api.auth.TemplateAuth
 import com.ugg.client.infrastructure.api.core.TemplateCore
+import com.ugg.client.infrastructure.keystore.foundation.external.InMemoryKeystore
 import com.ugg.client.infrastructure.keystore.foundation.external.Keystore
 import com.ugg.client.infrastructure.keystore.foundation.external.KeystoreAccessibility
 import com.ugg.client.infrastructure.keystore.foundation.external.KeystoreConfiguration
 import com.ugg.client.infrastructure.keystore.foundation.external.KeystoreReadResult
 import com.ugg.client.infrastructure.keystore.foundation.external.KeystoreWriteResult
 import com.ugg.client.infrastructure.keystore.session.AccessService
+import com.ugg.client.kit.onboarding.data.useCases.MockOnboardingUseCase
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
 import com.ugg.client.kit.splash.domain.exceptions.KeystoreUnavailableException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,10 +33,23 @@ class SharedSplashRepositoryTest {
         ): KeystoreWriteResult = KeystoreWriteResult.Stored
     }
 
-    private fun repositoryFor(result: KeystoreReadResult): SharedSplashRepository {
+    private suspend fun repositoryFor(
+        result: KeystoreReadResult,
+        onboardingCompleted: Boolean = true,
+    ): SharedSplashRepository {
         val auth = TemplateAuth(TemplateCore { })
         val access = AccessService(FixedKeystore(result))
-        return SharedSplashRepository(auth, access)
+        val onboarding = MockOnboardingUseCase(InMemoryKeystore())
+        if (onboardingCompleted) onboarding.complete()
+
+        return SharedSplashRepository(auth, access, onboarding)
+    }
+
+    @Test
+    fun firstLaunchShowsTheOnboarding() = runTest {
+        val repository = repositoryFor(KeystoreReadResult.NotFound, onboardingCompleted = false)
+
+        assertEquals(SplashFlow.Onboarding, repository.getInitialFlow())
     }
 
     @Test
