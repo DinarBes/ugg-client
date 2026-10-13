@@ -1,0 +1,39 @@
+rules_version = '2';
+
+// Paste into Firebase console → Firestore Database → Rules → Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    // Custom claim, set later with the Admin SDK for the workshop's account.
+    function isAdmin() { return signedIn() && request.auth.token.admin == true; }
+
+    // Catalog and screen texts: everyone reads, nobody writes from the app.
+    match /products/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /stores/{id}   { allow read: if true; allow write: if isAdmin(); }
+    match /content/{id}  { allow read: if true; allow write: if isAdmin(); }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+      match /addresses/{addressId} { allow read, write: if isOwner(uid); }
+    }
+
+    // Order numbers: a signed-in user may only move the counter by one,
+    // and only in the same transaction that creates an order with that number.
+    match /counters/orders {
+      allow read: if signedIn();
+      allow update: if signedIn()
+        && request.resource.data.next == resource.data.next + 1;
+      allow write: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.status == "accepted"
+        && request.resource.data.number == get(/databases/$(database)/documents/counters/orders).data.next
+        && getAfter(/databases/$(database)/documents/counters/orders).data.next == request.resource.data.number + 1;
+      allow update, delete: if isAdmin();
+    }
+  }
+}

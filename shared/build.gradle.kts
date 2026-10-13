@@ -19,6 +19,7 @@ kotlin {
         projects.infrastructure.keystoreFoundation,
         projects.infrastructure.keystoreSession,
         projects.infrastructure.firebaseAuth,
+        projects.infrastructure.firebaseFirestore,
 
         projects.clientKit.coreData,
         projects.clientKit.coreDomain,
