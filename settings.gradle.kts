@@ -22,6 +22,7 @@ listOf(
     Module(":infrastructure:api-auth", "infrastructure/api/auth"),
     Module(":infrastructure:keystore-foundation", "infrastructure/keystore/foundation"),
     Module(":infrastructure:keystore-session", "infrastructure/keystore/session"),
+    Module(":infrastructure:firebase-auth", "infrastructure/firebase/auth"),
 
     Module(":client-kit:core-data", "client-kit/core/data"),
     Module(":client-kit:core-domain", "client-kit/core/domain"),

@@ -15,6 +15,7 @@ kotlin {
             implementation(projects.clientKit.coreDomain)
 
             implementation(projects.infrastructure.apiAuth)
+            implementation(projects.infrastructure.firebaseAuth)
         }
     }
 }

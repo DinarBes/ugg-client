@@ -1,6 +1,5 @@
 package com.ugg.client.kit.auth.data
 
-import com.ugg.client.infrastructure.api.auth.services.AuthService
 import com.ugg.client.infrastructure.api.core.TemplateCore
 import com.ugg.client.kit.auth.data.repositories.MockAuthRepository
 import com.ugg.client.kit.auth.data.repositories.SharedAuthRepository
@@ -16,8 +15,8 @@ import org.kodein.di.scoped
 import org.kodein.di.singleton
 
 val authDataModule get() = DI.Module("auth-data") {
-    // TemplateAuth is bound at the composition root (TemplateApp), which owns the keystore and
-    // supplies the token-loading block. The feature only consumes it.
+    // PRODUCTION signs in with Firebase (PhoneAuthService, scoped in core/data). MOCK keeps the
+    // old seam: TemplateAuth, bound at the composition root, plus the fixed code 123456.
     bind<AuthUseCase>() with factory {
         val core: TemplateCore = instance()
 

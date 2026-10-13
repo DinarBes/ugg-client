@@ -1,6 +1,7 @@
 package com.ugg.client.kit.auth.presentation.external.view.models
 
 import com.ugg.client.kit.auth.domain.entities.AuthFlow
+import com.ugg.client.kit.auth.domain.entities.PhoneChallenge
 import com.ugg.client.kit.auth.domain.useCases.AuthUseCase
 import com.ugg.client.kit.auth.domain.states.InitiateState
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
@@ -67,13 +68,32 @@ class InitiateViewModelTest {
         assertFalse(vm.state.value.isLoading)
     }
 
+    @Test
+    fun verifiedWithoutCodeStaysPut() = runTest {
+        val navigation = NavigationContext()
+        val vm = InitiateViewModel(InstantUseCase(), navigation)
+        vm.onStateChange(vm.state.value.copy(phone = PHONE))
+
+        vm.onSubmit()
+        advanceUntilIdle()
+
+        // No OTP step: the splash reacts to the signed-in user instead.
+        assertTrue(navigation.events.replayCache.isEmpty())
+        assertNull(vm.state.value.error)
+    }
+
+    private class InstantUseCase : AuthUseCase {
+        override suspend fun initiate(phone: String): PhoneChallenge = PhoneChallenge.SignedIn
+        override suspend fun login(otp: String, sessionId: String) = Unit
+    }
+
     private class SuccessUseCase : AuthUseCase {
-        override suspend fun initiate(phone: String): String = SESSION_ID
+        override suspend fun initiate(phone: String): PhoneChallenge = PhoneChallenge.CodeSent(SESSION_ID)
         override suspend fun login(otp: String, sessionId: String) = Unit
     }
 
     private class FailureUseCase : AuthUseCase {
-        override suspend fun initiate(phone: String): String = throw Exception("network error")
+        override suspend fun initiate(phone: String): PhoneChallenge = throw Exception("network error")
         override suspend fun login(otp: String, sessionId: String) = Unit
     }
 

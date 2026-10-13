@@ -15,7 +15,7 @@ android {
     namespace = "com.ugg.client.android"
 
     defaultConfig {
-        applicationId = "com.ugg.client.android"
+        applicationId = "com.ugg.client"
         versionCode = 1
         versionName = "1.0"
 

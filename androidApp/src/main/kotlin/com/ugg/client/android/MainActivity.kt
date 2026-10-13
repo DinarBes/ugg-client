@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.ugg.client.infrastructure.api.core.TemplateCore
+import com.ugg.client.infrastructure.firebase.auth.PhoneAuthActivity
 import com.ugg.client.kit.core.domain.AppEnvironment
 import com.ugg.client.shared.ContentView
 import com.ugg.client.shared.TemplateApp
@@ -15,6 +16,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        // Firebase needs a live Activity to send an SMS code (reCAPTCHA fallback).
+        PhoneAuthActivity.attach(this)
 
         val app = TemplateApp {
             environment = AppEnvironment.PRODUCTION

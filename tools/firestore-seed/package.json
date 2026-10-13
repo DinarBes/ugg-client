@@ -1,0 +1,11 @@
+{
+  "name": "ugg-firestore-seed",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "node seed.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.5.0"
+  }
+}

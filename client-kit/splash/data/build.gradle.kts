@@ -16,6 +16,8 @@ kotlin {
             api(projects.infrastructure.apiAuth)
             api(projects.infrastructure.keystoreSession)
             api(projects.clientKit.onboardingDomain)
+            api(projects.infrastructure.firebaseAuth)
+            implementation(projects.infrastructure.apiCore)
         }
 
         commonTest.dependencies {

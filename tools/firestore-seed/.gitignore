@@ -1,0 +1,4 @@
+# The Admin key gives full access to the project. Never commit it.
+service-account.json
+node_modules/
+package-lock.json

@@ -1,0 +1,185 @@
+// What goes into Firestore. Taken from the app's mocks (Product.mock, Store.mock, Home.mock,
+// Story.mock, OnboardingSlide.mock, CartCatalog). Prices are rubles as numbers, colors are
+// "#RRGGBB", and anything the app phrases itself («14 900 ₽», «Открыто») is stored as raw values.
+
+const hours = (open, close) => ({ open, close });
+
+export const documents = {
+  // ───────────────────────── products ─────────────────────────
+  "products/classic": {
+    title: "Классика",
+    kicker: "Ручная работа · Байкал",
+    description:
+      "Высокие угги из цельной овчины с густым мехом внутри. Держат тепло в байкальские морозы и дышат в оттепель. Каждую пару шьёт один мастер — от раскроя до последнего стежка.",
+    price: 14900,
+    leadTimeDays: { min: 5, max: 7 },
+    photos: [],
+    shades: [
+      { id: "chestnut", name: "Каштан", color: "#B98A5E", inStock: true },
+      { id: "sand", name: "Песок", color: "#D9C3A2", inStock: true },
+      { id: "milk", name: "Молоко", color: "#EDE3D5", inStock: false },
+      { id: "chocolate", name: "Шоколад", color: "#5A3E2E", inStock: true },
+      { id: "graphite", name: "Графит", color: "#5E5B57", inStock: false },
+    ],
+    heights: [
+      { id: "standard", name: "Стандарт", heightCm: 22 },
+      { id: "tall", name: "Высокие", heightCm: 30 },
+    ],
+    sizes: Array.from({ length: 11 }, (_, i) => ({ label: String(35 + i), available: 35 + i !== 44 })),
+    customSizeHint: "Нет вашего размера? Сошьём по мерке стопы — это бесплатно.",
+    features: [
+      { kind: "material", title: "Натуральная овчина", caption: "мех 18–22 мм внутри" },
+      { kind: "handmade", title: "Ручной шов", caption: "вощёная нить, двойная строчка" },
+      { kind: "warmth", title: "Для сибирской зимы", caption: "держат тепло до −30°" },
+      { kind: "warranty", title: "Гарантия на шов", caption: "12 месяцев с покупки" },
+    ],
+    details: [
+      {
+        title: "Материалы и состав",
+        body: "Верх и подкладка — натуральная овчина. Подошва — лёгкая EVA с протектором против скольжения. Стелька из шерстяного войлока, её можно вынуть и просушить.",
+      },
+      {
+        title: "Уход",
+        body: "Сушите при комнатной температуре, вдали от батареи. Снег и соль снимайте мягкой щёткой, пятна — специальным средством для овчины.",
+      },
+      {
+        title: "Доставка и возврат",
+        body: "Самовывоз из мастерской бесплатно, доставка СДЭК по России. Если пара не подошла по размеру — перешьём или вернём деньги в течение 14 дней.",
+      },
+      {
+        title: "Примерка в наших точках",
+        body: "В Иркутске и Листвянке можно примерить угги всех цветов и снять мерку стопы у мастера.",
+      },
+    ],
+  },
+
+  // ───────────────────────── stores ─────────────────────────
+  "stores/irkutsk": {
+    order: 0,
+    city: "Иркутск",
+    name: "Мастерская и магазин",
+    address: "ул. Примерная, 12 · 2 этаж",
+    phone: "+79000000000",
+    location: { lat: 52.287, lng: 104.281 },
+    services: ["Примерка", "Мерка стопы", "Самовывоз"],
+    timezone: "Asia/Irkutsk",
+    schedule: {
+      mon: hours("10:00", "20:00"),
+      tue: hours("10:00", "20:00"),
+      wed: hours("10:00", "20:00"),
+      thu: hours("10:00", "20:00"),
+      fri: hours("10:00", "20:00"),
+      sat: hours("10:00", "20:00"),
+      sun: hours("10:00", "20:00"),
+    },
+  },
+  "stores/listvyanka": {
+    order: 1,
+    city: "Листвянка",
+    name: "Шоурум у набережной",
+    address: "ул. Береговая, 3",
+    phone: "+79000000001",
+    location: { lat: 51.853, lng: 104.87 },
+    services: ["Примерка", "Мерка стопы", "Самовывоз"],
+    timezone: "Asia/Irkutsk",
+    schedule: {
+      mon: null,
+      tue: null,
+      wed: null,
+      thu: null,
+      fri: hours("11:00", "19:00"),
+      sat: hours("11:00", "19:00"),
+      sun: hours("11:00", "19:00"),
+    },
+  },
+
+  // ───────────────────────── screen texts ─────────────────────────
+  "content/home": {
+    heroKicker: "Единственная модель",
+    heroDescription:
+      "Овчина из хозяйств Прибайкалья, ручной шов и около шести часов работы мастера над каждой парой.",
+    stats: [
+      { value: "100%", caption: "натуральная\nовчина" },
+      { value: "6 ч", caption: "ручной работы\nнад парой" },
+      { value: "2", caption: "точки\nна Байкале" },
+    ],
+    craftSteps: [
+      { number: "01", title: "Выделка овчины", description: "Берём шкуры у хозяйств Прибайкалья и бережно выделываем мех." },
+      { number: "02", title: "Раскрой", description: "Каждую деталь кроим вручную, подбирая мех по густоте." },
+      { number: "03", title: "Ручной шов", description: "Прошиваем вощёной нитью — так шов служит годами." },
+      { number: "04", title: "Проверка", description: "Каждую пару примеряем на колодку и проверяем шов." },
+    ],
+    quote: {
+      text: "Каждую пару шьём так, будто для своей семьи — без спешки и без конвейера.",
+      author: "Имя мастера",
+      role: "основательница мастерской",
+    },
+    care: { kicker: "Уход", title: "Как сохранить угги тёплыми на годы", readMinutes: 3 },
+  },
+
+  "content/story": {
+    kicker: "О мастерской",
+    title: "Сшито\nна Байкале",
+    intro:
+      "Мы не делаем коллекции. Мы делаем одну модель — и каждый год делаем её чуть лучше: подбираем овчину, уточняем лекала, проверяем каждую пару на себе этой же зимой.",
+    stepsTitle: "Путь одной пары",
+    steps: [
+      { number: "01", title: "Овчина", description: "Выбираем шкуры у хозяйств Прибайкалья. Мех должен быть густым и ровным — иначе не возьмём." },
+      { number: "02", title: "Раскрой", description: "Мастер кроит детали вручную, раскладывая лекала так, чтобы самый плотный мех пришёлся на пятку и носок." },
+      { number: "03", title: "Пошив", description: "Около шести часов ручной работы. Шов — вощёной нитью, его не боится ни снег, ни соль на дорогах." },
+      { number: "04", title: "Проверка", description: "Каждую пару надеваем на колодку, проверяем шов и подписываем бирку именем мастера." },
+    ],
+    highlight: {
+      kicker: "Почему Байкал",
+      title: "Здесь зима длится полгода — и мы знаем о тепле всё",
+      body: "Мы носим эти угги сами: на льду озера, в −30° и в весеннюю слякоть. Поэтому в них нет ничего лишнего.",
+    },
+  },
+
+  "content/onboarding": {
+    slides: [
+      {
+        id: "workshop",
+        overline: "Мастерская на Байкале",
+        title: "Тепло, сшитое\nруками",
+        description: "Одна модель, доведённая до совершенства: натуральная овчина, ручной шов и пять природных оттенков.",
+      },
+      {
+        id: "made-to-order",
+        overline: "Под заказ",
+        title: "Ваша пара —\nот мерки до шва",
+        description: "Выберите цвет и размер, а мастер сошьёт пару за 5–7 дней. Нет вашего размера — сошьём по мерке стопы.",
+      },
+      {
+        id: "stores",
+        overline: "Две точки на Байкале",
+        title: "Приходите\nпримерить",
+        description: "В Иркутске и Листвянке можно примерить угги, снять мерку и забрать готовый заказ.",
+      },
+    ],
+  },
+
+  "content/checkout": {
+    extras: [
+      { id: "care-cream", title: "Крем для овчины", caption: "уход", price: 890 },
+      { id: "felt-insoles", title: "Стельки из войлока", caption: "пара", price: 690 },
+      { id: "linen-bag", title: "Льняной мешок", caption: "для хранения", price: 490 },
+    ],
+    deliveries: [
+      {
+        id: "pickup",
+        title: "Самовывоз из мастерской",
+        description: "Иркутск, ул. Примерная, 12 · когда пара будет готова",
+        price: 0,
+        isFromPrice: false,
+        storeId: "irkutsk",
+      },
+      { id: "cdek", title: "Доставка СДЭК", description: "3–5 дней после пошива", price: 450, isFromPrice: true, storeId: null },
+      { id: "courier", title: "Курьер по Иркутску", description: "в удобный вам день", price: 350, isFromPrice: false, storeId: null },
+    ],
+    giftWrap: { title: "Подарочная упаковка", description: "льняной мешок и открытка от мастера", price: 0 },
+  },
+
+  // Next order number; the app increments it in a transaction when placing an order.
+  "counters/orders": { next: 1024 },
+};

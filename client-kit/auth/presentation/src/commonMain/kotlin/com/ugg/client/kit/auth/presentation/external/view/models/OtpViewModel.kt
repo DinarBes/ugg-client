@@ -3,6 +3,7 @@ package com.ugg.client.kit.auth.presentation.external.view.models
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.ugg.client.kit.auth.domain.entities.PhoneChallenge
 import com.ugg.client.kit.auth.domain.useCases.AuthUseCase
 import com.ugg.client.kit.auth.domain.states.OtpState
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -44,9 +45,12 @@ class OtpViewModel(
         state.update { it.copy(isResending = true, otp = "", error = null) }
 
         try {
-            val sessionId = authUseCase.initiate(phone)
-
-            state.update { it.copy(sessionId = sessionId, resendCount = it.resendCount + 1) }
+            when (val challenge = authUseCase.initiate(phone)) {
+                is PhoneChallenge.CodeSent ->
+                    state.update { it.copy(sessionId = challenge.sessionId, resendCount = it.resendCount + 1) }
+                // Verified without a code this time; the splash takes the app forward.
+                PhoneChallenge.SignedIn -> Unit
+            }
         } finally {
             state.update { it.copy(isResending = false) }
         }

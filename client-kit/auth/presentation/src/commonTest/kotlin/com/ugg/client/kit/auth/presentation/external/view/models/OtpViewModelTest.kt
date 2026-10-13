@@ -1,5 +1,6 @@
 package com.ugg.client.kit.auth.presentation.external.view.models
 
+import com.ugg.client.kit.auth.domain.entities.PhoneChallenge
 import com.ugg.client.kit.auth.domain.useCases.AuthUseCase
 import com.ugg.client.kit.auth.domain.states.OtpState
 import kotlinx.coroutines.Dispatchers
@@ -88,19 +89,19 @@ class OtpViewModelTest {
     }
 
     private class SuccessUseCase : AuthUseCase {
-        override suspend fun initiate(phone: String): String = SESSION_ID
+        override suspend fun initiate(phone: String): PhoneChallenge = PhoneChallenge.CodeSent(SESSION_ID)
         override suspend fun login(otp: String, sessionId: String) = Unit
     }
 
     private class FailureUseCase : AuthUseCase {
-        override suspend fun initiate(phone: String): String = SESSION_ID
+        override suspend fun initiate(phone: String): PhoneChallenge = PhoneChallenge.CodeSent(SESSION_ID)
         override suspend fun login(otp: String, sessionId: String) = throw Exception("Invalid OTP")
     }
 
     private class RecordingUseCase(private val newSessionId: String = SESSION_ID) : AuthUseCase {
         var sessionId: String? = null
 
-        override suspend fun initiate(phone: String): String = newSessionId
+        override suspend fun initiate(phone: String): PhoneChallenge = PhoneChallenge.CodeSent(newSessionId)
         override suspend fun login(otp: String, sessionId: String) { this.sessionId = sessionId }
     }
 

@@ -18,6 +18,7 @@ kotlin {
         projects.infrastructure.apiAuth,
         projects.infrastructure.keystoreFoundation,
         projects.infrastructure.keystoreSession,
+        projects.infrastructure.firebaseAuth,
 
         projects.clientKit.coreData,
         projects.clientKit.coreDomain,
