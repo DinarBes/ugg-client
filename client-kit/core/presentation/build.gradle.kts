@@ -14,3 +14,7 @@ kotlin {
         }
     }
 }
+
+compose.resources {
+    packageOfResClass = "com.ugg.client.kit.core.presentation.resources"
+}
