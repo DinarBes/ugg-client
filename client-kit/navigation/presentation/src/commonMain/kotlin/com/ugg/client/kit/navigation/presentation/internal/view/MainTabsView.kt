@@ -20,6 +20,7 @@ import com.ugg.client.kit.core.presentation.external.components.UggTabItem
 import com.ugg.client.kit.core.presentation.external.icons.UggIcons
 import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 import com.ugg.client.kit.home.presentation.external.view.HomeScreen
+import com.ugg.client.kit.product.presentation.external.view.ProductScreen
 
 internal enum class MainTab(val label: String, val icon: () -> ImageVector) {
     Home("Главная", { UggIcons.Home }),
@@ -53,6 +54,11 @@ internal fun MainTabsView() {
                 contentPadding = padding,
                 onChooseModel = { selected = MainTab.Model },
                 onOpenStores = { selected = MainTab.Stores },
+            )
+
+            MainTab.Model -> ProductScreen(
+                contentPadding = padding,
+                onAddToCart = {},
             )
 
             else -> TabPlaceholder(tab = selected, contentPadding = padding)

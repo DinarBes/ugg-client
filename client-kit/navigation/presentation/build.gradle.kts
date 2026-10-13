@@ -20,6 +20,8 @@ kotlin {
 
             implementation(projects.clientKit.onboardingPresentation)
             implementation(projects.clientKit.homePresentation)
+            implementation(projects.clientKit.productDomain)
+            implementation(projects.clientKit.productPresentation)
 
             implementation(projects.clientKit.corePresentation)
 

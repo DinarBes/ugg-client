@@ -133,7 +133,8 @@ internal fun StatsSection(stats: List<HomeStat>) {
             .clip(UggTheme.shapes.large)
             .background(colors.surface)
             .padding(horizontal = UggTheme.spacing.l, vertical = 18.dp),
-        horizontalArrangement = Arrangement.spacedBy(UggTheme.spacing.xs),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         stats.forEach { stat ->
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
