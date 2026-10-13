@@ -42,6 +42,10 @@ listOf(
     Module(":client-kit:onboarding-data", "client-kit/onboarding/data"),
     Module(":client-kit:onboarding-domain", "client-kit/onboarding/domain"),
     Module(":client-kit:onboarding-presentation", "client-kit/onboarding/presentation"),
+
+    Module(":client-kit:home-data", "client-kit/home/data"),
+    Module(":client-kit:home-domain", "client-kit/home/domain"),
+    Module(":client-kit:home-presentation", "client-kit/home/presentation"),
 ).forEach {
     include(it.name)
     project(it.name).projectDir = file(it.path)

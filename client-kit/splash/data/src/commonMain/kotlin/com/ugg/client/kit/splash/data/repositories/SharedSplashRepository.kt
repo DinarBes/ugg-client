@@ -27,7 +27,8 @@ class SharedSplashRepository(
 
         return when (access.authorizationStatus()) {
             AuthorizationStatus.Authorized -> SplashFlow.Launch
-            AuthorizationStatus.NotAuthorized -> SplashFlow.Auth
+            // Guests browse freely; the phone number is asked for at checkout, not at launch.
+            AuthorizationStatus.NotAuthorized -> SplashFlow.Launch
             // Credentials unreadable — most likely a background launch on a locked device. Throw
             // rather than guess: the splash screen stays put and no one gets signed out.
             AuthorizationStatus.Undetermined -> throw KeystoreUnavailableException()
@@ -37,7 +38,8 @@ class SharedSplashRepository(
     override fun flows(): Flow<SplashFlow> = context.event.map {
         when (it) {
             AuthEvent.Login -> SplashFlow.Launch
-            AuthEvent.Logout -> SplashFlow.Auth
+            // Signing out returns to the app as a guest rather than locking it behind the login.
+            AuthEvent.Logout -> SplashFlow.Launch
         }
     }
 }

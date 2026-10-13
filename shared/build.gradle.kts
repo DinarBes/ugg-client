@@ -38,6 +38,10 @@ kotlin {
         projects.clientKit.onboardingData,
         projects.clientKit.onboardingDomain,
         projects.clientKit.onboardingPresentation,
+
+        projects.clientKit.homeData,
+        projects.clientKit.homeDomain,
+        projects.clientKit.homePresentation,
     )
 
     targets.filterIsInstance<KotlinNativeTarget>().forEach { target ->

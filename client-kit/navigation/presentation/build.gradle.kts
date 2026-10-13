@@ -19,6 +19,9 @@ kotlin {
             implementation(projects.clientKit.authPresentation)
 
             implementation(projects.clientKit.onboardingPresentation)
+            implementation(projects.clientKit.homePresentation)
+
+            implementation(projects.clientKit.corePresentation)
 
             implementation(libs.navigation3.ui)
         }

@@ -60,8 +60,8 @@ class SharedSplashRepositoryTest {
     }
 
     @Test
-    fun missingTokenSendsTheUserToAuth() = runTest {
-        assertEquals(SplashFlow.Auth, repositoryFor(KeystoreReadResult.NotFound).getInitialFlow())
+    fun missingTokenLetsTheGuestIn() = runTest {
+        assertEquals(SplashFlow.Launch, repositoryFor(KeystoreReadResult.NotFound).getInitialFlow())
     }
 
     @Test

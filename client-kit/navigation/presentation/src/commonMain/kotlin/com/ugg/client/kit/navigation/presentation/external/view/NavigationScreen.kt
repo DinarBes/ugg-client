@@ -1,6 +1,5 @@
 package com.ugg.client.kit.navigation.presentation.external.view
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,6 +14,7 @@ import com.ugg.client.kit.auth.presentation.external.view.InitiateScreen
 import com.ugg.client.kit.auth.presentation.external.view.OtpScreen
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
+import com.ugg.client.kit.navigation.presentation.internal.view.MainTabsView
 import com.ugg.client.kit.onboarding.presentation.external.view.OnboardingScreen
 import com.ugg.client.kit.splash.domain.entities.SplashDestination
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
@@ -81,7 +81,7 @@ fun NavigationScreen() {
                 InitiateScreen()
             }
             entry<SplashFlow.Launch> {
-                Text("Welcome! Replace with HomeScreen")
+                MainTabsView()
             }
             entry<AuthFlow.Otp> {
                 OtpScreen(it.phone, it.sessionId)

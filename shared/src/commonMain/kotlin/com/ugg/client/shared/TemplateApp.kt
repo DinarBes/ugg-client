@@ -8,6 +8,7 @@ import com.ugg.client.kit.auth.presentation.external.authModule
 import com.ugg.client.kit.core.data.coreDataModule
 import com.ugg.client.kit.core.domain.AppEnvironment
 import com.ugg.client.kit.core.domain.resolve
+import com.ugg.client.kit.home.presentation.external.homeModule
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.presentation.external.navigationModule
 import com.ugg.client.kit.onboarding.presentation.external.onboardingModule
@@ -70,6 +71,7 @@ class TemplateApp(block: TemplateAppBuilder.() -> Unit = {}) {
             import(navigationModule)
             import(splashModule)
             import(onboardingModule)
+            import(homeModule)
         }
     }
 
