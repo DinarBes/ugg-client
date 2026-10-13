@@ -26,6 +26,10 @@ kermit-version = "2.1.0"
 
 multiplatform-foundation-version = "1.3.2"
 
+firebase-bom-version = "34.19.0"
+
+kotlinx-browser-version = "0.5.0"
+
 [libraries]
 gradle-skie = { group = "co.touchlab.skie", name = "gradle-plugin", version.ref = "skie-version" }
 gradle-kotlin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin-version" }
@@ -68,6 +72,12 @@ multiplatform-foundation-network = { group = "cloud.paybuddy", name = "multiplat
 multiplatform-foundation-keystore = { group = "cloud.paybuddy", name = "multiplatform-foundation-keystore", version.ref = "multiplatform-foundation-version" }
 multiplatform-foundation-serialization = { group = "cloud.paybuddy", name = "multiplatform-foundation-serialization", version.ref = "multiplatform-foundation-version" }
 
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom-version" }
+
+kotlinx-browser = { group = "org.jetbrains.kotlinx", name = "kotlinx-browser", version.ref = "kotlinx-browser-version" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+
 [plugins]
 setup-multiplatform-app = { id = "setup-multiplatform-app" }
 setup-android-application = { id = "setup-android-application" }
@@ -75,3 +85,5 @@ setup-multiplatform-library = { id = "setup-multiplatform-library" }
 setup-multiplatform-feature = { id = "setup-multiplatform-feature" }
 setup-multiplatform-feature-compose = { id = "setup-multiplatform-feature-compose" }
 setup-multiplatform-infrastructure = { id = "setup-multiplatform-infrastructure" }
+setup-multiplatform-infrastructure-firebase = { id = "setup-multiplatform-infrastructure-firebase" }
+

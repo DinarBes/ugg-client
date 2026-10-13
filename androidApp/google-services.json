@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "853548872037",
+    "project_id": "uggs-e27e4",
+    "storage_bucket": "uggs-e27e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853548872037:android:3c5dbada177fbf030b718c",
+        "android_client_info": {
+          "package_name": "com.ugg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwHXAal_mVvcpnu4Lddrb8L6utqhtSuBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853548872037:android:5a7b8d9a17a8163f0b718c",
+        "android_client_info": {
+          "package_name": "com.ugg.client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwHXAal_mVvcpnu4Lddrb8L6utqhtSuBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
