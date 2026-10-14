@@ -121,6 +121,7 @@ class SharedProfileUseCaseTest {
 
     private open class FakeUsers(private val user: UserDto? = UserDto(name = "Анна")) : UserService {
         override fun observeUser(uid: String): Flow<UserDto?> = flowOf(user)
+        override suspend fun getUser(uid: String): UserDto? = user
         override suspend fun saveUser(uid: String, user: UserDto) = Unit
         override fun observeAddresses(uid: String): Flow<List<AddressDto>> = flowOf(emptyList())
         override suspend fun saveAddress(uid: String, address: AddressDto) = ""

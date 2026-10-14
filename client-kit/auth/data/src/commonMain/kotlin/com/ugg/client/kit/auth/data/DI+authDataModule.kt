@@ -2,8 +2,11 @@ package com.ugg.client.kit.auth.data
 
 import com.ugg.client.infrastructure.api.core.TemplateCore
 import com.ugg.client.kit.auth.data.repositories.MockAuthRepository
+import com.ugg.client.kit.auth.data.repositories.MockRegistrationRepository
 import com.ugg.client.kit.auth.data.repositories.SharedAuthRepository
+import com.ugg.client.kit.auth.data.repositories.SharedRegistrationRepository
 import com.ugg.client.kit.auth.domain.useCases.AuthUseCase
+import com.ugg.client.kit.auth.domain.useCases.RegistrationUseCase
 import com.ugg.client.kit.core.data.scopes.TemplateCoreScope
 import com.ugg.client.kit.core.domain.AppEnvironment
 import org.kodein.di.DI
@@ -23,6 +26,15 @@ val authDataModule get() = DI.Module("auth-data") {
         when (instance<AppEnvironment>()) {
             AppEnvironment.PRODUCTION -> SharedAuthRepository(on(core).instance())
             AppEnvironment.MOCK -> MockAuthRepository(instance())
+        }
+    }
+
+    bind<RegistrationUseCase>() with factory {
+        val core: TemplateCore = instance()
+
+        when (instance<AppEnvironment>()) {
+            AppEnvironment.PRODUCTION -> SharedRegistrationRepository(on(core).instance(), on(core).instance())
+            AppEnvironment.MOCK -> MockRegistrationRepository()
         }
     }
 }

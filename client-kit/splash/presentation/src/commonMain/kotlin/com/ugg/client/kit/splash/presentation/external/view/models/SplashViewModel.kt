@@ -6,6 +6,7 @@ import co.touchlab.kermit.Logger
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.splash.domain.useCases.SplashUseCase
 import com.ugg.client.kit.splash.presentation.external.states.SplashState
+import com.ugg.client.kit.splash.domain.entities.SplashFlow
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,8 +50,12 @@ class SplashViewModel(
     }
 
     private fun observe() = viewModelScope.launch(unexpectedExceptionHandler) {
-        splashUseCase.flows().collect {
-            navigationContext.navigate(it) { clear() }
+        splashUseCase.flows().collect { flow ->
+            navigationContext.navigate(flow) {
+                clear()
+                // The name step sits over the app, so «back» on it simply skips it.
+                if (flow == SplashFlow.Registration) add(SplashFlow.Launch)
+            }
         }
     }
 }

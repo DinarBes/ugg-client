@@ -16,6 +16,12 @@ interface UserService {
     fun observeUser(uid: String): Flow<UserDto?>
 
     /**
+     * One read, from the server when online (the offline cache otherwise) — for decisions such
+     * as «is this a new account», where a not-yet-cached document must not look missing.
+     */
+    suspend fun getUser(uid: String): UserDto?
+
+    /**
      * Saves the whole profile (fields left at their defaults are written too, so pass the user
      * read from [observeUser] with the changes applied). `createdAt` is set once by the server.
      */
@@ -35,6 +41,8 @@ internal class FirestoreUserService(
 
     override fun observeUser(uid: String): Flow<UserDto?> =
         store.observe(userPath(uid)).map { it?.decode(UserDto.serializer()) }
+
+    override suspend fun getUser(uid: String): UserDto? = store.get(userPath(uid))?.decode(UserDto.serializer())
 
     override suspend fun saveUser(uid: String, user: UserDto) {
         val existing = store.get(userPath(uid))

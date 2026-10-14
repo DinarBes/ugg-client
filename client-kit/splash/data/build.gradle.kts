@@ -17,6 +17,7 @@ kotlin {
             api(projects.infrastructure.keystoreSession)
             api(projects.clientKit.onboardingDomain)
             api(projects.infrastructure.firebaseAuth)
+            api(projects.infrastructure.firebaseFirestore)
             implementation(projects.infrastructure.apiCore)
         }
 

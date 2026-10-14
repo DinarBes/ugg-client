@@ -15,6 +15,7 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import com.ugg.client.kit.auth.domain.entities.AuthFlow
 import com.ugg.client.kit.auth.presentation.external.view.InitiateScreen
 import com.ugg.client.kit.auth.presentation.external.view.OtpScreen
+import com.ugg.client.kit.auth.presentation.external.view.RegistrationScreen
 import com.ugg.client.kit.cart.domain.entities.CartFlow
 import com.ugg.client.kit.cart.presentation.external.view.CartScreen
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
@@ -53,6 +54,7 @@ fun NavigationScreen() {
                 subclass(SplashFlow.Onboarding::class, SplashFlow.Onboarding.serializer())
                 subclass(SplashFlow.Auth::class, SplashFlow.Auth.serializer())
                 subclass(SplashFlow.Launch::class, SplashFlow.Launch.serializer())
+                subclass(SplashFlow.Registration::class, SplashFlow.Registration.serializer())
                 subclass(AuthFlow.Otp::class, AuthFlow.Otp.serializer())
                 subclass(StoryFlow.Story::class, StoryFlow.Story.serializer())
                 subclass(CartFlow.Cart::class, CartFlow.Cart.serializer())
@@ -125,6 +127,10 @@ fun NavigationScreen() {
                     // the orders backend exists.
                     onCheckout = {},
                 )
+            }
+            entry<SplashFlow.Registration> {
+                // Pushed over Launch by the splash after the first sign-in; closing it pops back.
+                RegistrationScreen()
             }
             entry<AuthFlow.Otp> {
                 OtpScreen(phone = it.phone, sessionId = it.sessionId, onBack = { navigationContext.back() })

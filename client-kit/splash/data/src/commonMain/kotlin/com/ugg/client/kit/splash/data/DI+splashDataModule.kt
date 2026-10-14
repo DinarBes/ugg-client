@@ -15,6 +15,6 @@ val splashDataModule get() = DI.Module("splash-data") {
     bind<SplashUseCase>() with factory {
         val core: TemplateCore = instance()
 
-        SharedSplashRepository(instance(), instance(), instance(), on(core).instance())
+        SharedSplashRepository(instance(), instance(), instance(), on(core).instance(), on(core).instance())
     }
 }

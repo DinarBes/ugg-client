@@ -3,7 +3,11 @@ package com.ugg.client.kit.splash.data.repositories
 import com.ugg.client.infrastructure.api.auth.TemplateAuth
 import com.ugg.client.infrastructure.api.auth.context.AuthEvent
 import com.ugg.client.infrastructure.keystore.session.AccessService
+import com.ugg.client.infrastructure.firebase.auth.AuthUser
 import com.ugg.client.infrastructure.firebase.auth.PhoneAuthService
+import com.ugg.client.infrastructure.firebase.firestore.FirestoreException
+import com.ugg.client.infrastructure.firebase.firestore.dto.UserDto
+import com.ugg.client.infrastructure.firebase.firestore.services.UserService
 import com.ugg.client.infrastructure.keystore.session.AuthorizationStatus
 import com.ugg.client.kit.onboarding.domain.useCases.OnboardingUseCase
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
@@ -11,7 +15,7 @@ import com.ugg.client.kit.splash.domain.exceptions.KeystoreUnavailableException
 import com.ugg.client.kit.splash.domain.useCases.SplashUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -22,6 +26,7 @@ class SharedSplashRepository(
     private val access: AccessService,
     private val onboarding: OnboardingUseCase,
     private val phoneAuth: PhoneAuthService,
+    private val users: UserService,
 ): SplashUseCase {
     private val context by auth.context
 
@@ -52,9 +57,24 @@ class SharedSplashRepository(
         // Firebase sign-in is watched directly: it also covers Android verifying the number
         // without a code, which no screen sees. The first value is the state at launch, not a change.
         phoneAuth.observeUser()
-            .map { it != null }
-            .distinctUntilChanged()
+            .distinctUntilChangedBy { it?.uid }
             .drop(1)
-            .map { SplashFlow.Launch },
+            .map { user -> if (user == null) SplashFlow.Launch else afterSignIn(user) },
     )
+
+    /**
+     * A number seen for the first time has no `users/{uid}` yet: create it with the phone, so the
+     * workshop sees who ordered, and ask for a name. Offline the check is skipped — the profile
+     * works without the document, and the next sign-in asks again.
+     */
+    private suspend fun afterSignIn(user: AuthUser): SplashFlow = try {
+        if (users.getUser(user.uid) != null) {
+            SplashFlow.Launch
+        } else {
+            users.saveUser(user.uid, UserDto(phone = user.phone.orEmpty()))
+            SplashFlow.Registration
+        }
+    } catch (e: FirestoreException) {
+        SplashFlow.Launch
+    }
 }

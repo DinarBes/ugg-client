@@ -24,4 +24,10 @@ sealed class SplashFlow : Destination() {
     data object Launch : SplashFlow() {
         override val isTabViewVisible = false
     }
+
+    /** Right after the first sign-in: «Как к вам обращаться?», shown over the app. */
+    @Serializable
+    data object Registration : SplashFlow() {
+        override val isTabViewVisible = false
+    }
 }
