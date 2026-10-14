@@ -28,6 +28,7 @@ internal fun AddressesView(
     state: AddressesState,
     onBack: () -> Unit,
     onRetry: () -> Unit,
+    onRefresh: () -> Unit,
     onOpen: (String) -> Unit,
     onAdd: () -> Unit,
 ) {
@@ -37,6 +38,8 @@ internal fun AddressesView(
         isLoading = state.isLoading && state.addresses.isEmpty(),
         loadError = state.error,
         onRetry = onRetry,
+        isRefreshing = state.isRefreshing,
+        onRefresh = onRefresh,
         bottom = {
             UggButton(text = "Добавить адрес", onClick = onAdd, showArrow = false, modifier = Modifier.fillMaxWidth())
         },

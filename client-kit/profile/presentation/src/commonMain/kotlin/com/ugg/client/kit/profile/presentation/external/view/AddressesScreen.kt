@@ -17,6 +17,7 @@ fun AddressesScreen(onBack: () -> Unit) {
         state = state,
         onBack = onBack,
         onRetry = { viewModel.observe() },
+        onRefresh = { viewModel.refresh() },
         onOpen = viewModel::onOpen,
         onAdd = { viewModel.onAdd() },
     )

@@ -9,5 +9,7 @@ data class ProductState(
     /** Index in [Product.details]; `null` — everything collapsed. */
     val expandedDetail: Int? = 0,
     val isLoading: Boolean = false,
+    /** Pull-to-refresh in progress: the content stays on screen under the spinner. */
+    val isRefreshing: Boolean = false,
     val error: Throwable? = null,
 )

@@ -44,6 +44,25 @@ class HomeViewModel(
         }
     }
 
+    /**
+     * Pull-to-refresh: reads the data again while the current content stays on screen. A failure
+     * keeps that content — the error screen shows only when there was nothing to show yet.
+     */
+    fun refresh() {
+        if (state.value.isRefreshing) return
+        // Set right away, not inside the coroutine: a second pull before it starts is ignored.
+        state.update { it.copy(isRefreshing = true) }
+
+        viewModelScope.launch(unexpectedExceptionHandler) {
+            try {
+                show(useCase.fetch())
+                state.update { it.copy(error = null) }
+            } finally {
+                state.update { it.copy(isRefreshing = false) }
+            }
+        }
+    }
+
     private fun observeCart() = viewModelScope.launch(unexpectedExceptionHandler) {
         cartUseCase.observeCart().collect { cart -> state.update { it.copy(cartCount = cart.itemCount) } }
     }

@@ -63,6 +63,33 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun refreshShowsTheNewContent() = runTest {
+        val useCase = SequenceUseCase(listOf(Result.success("Классика"), Result.success("Классика 2")))
+        val vm = HomeViewModel(useCase, FakeCartUseCase())
+        advanceUntilIdle()
+
+        vm.refresh()
+        advanceUntilIdle()
+
+        assertEquals("Классика 2", vm.state.value.home?.hero?.title)
+        assertFalse(vm.state.value.isRefreshing)
+    }
+
+    @Test
+    fun failedRefreshKeepsTheContentOnScreen() = runTest {
+        val useCase = SequenceUseCase(listOf(Result.success("Классика"), Result.failure(Exception("offline"))))
+        val vm = HomeViewModel(useCase, FakeCartUseCase())
+        advanceUntilIdle()
+
+        vm.refresh()
+        advanceUntilIdle()
+
+        assertEquals("Классика", vm.state.value.home?.hero?.title)
+        assertFalse(vm.state.value.isRefreshing)
+        assertFalse(vm.state.value.isLoading)
+    }
+
+    @Test
     fun cartCountFollowsTheCart() = runTest {
         val vm = HomeViewModel(SuccessUseCase(), FakeCartUseCase(itemCount = 2))
         advanceUntilIdle()
@@ -85,6 +112,13 @@ class HomeViewModelTest {
 
     private class FailureUseCase : HomeUseCase {
         override suspend fun fetch(): Home = throw Exception("stub error")
+    }
+
+    /** Answers each fetch with the next result: a title or a failure. */
+    private class SequenceUseCase(private val results: List<Result<String>>) : HomeUseCase {
+        private var calls = 0
+
+        override suspend fun fetch(): Home = Home(hero = HomeHero(title = results[calls++].getOrThrow()))
     }
 
     private class FlakyUseCase : HomeUseCase {

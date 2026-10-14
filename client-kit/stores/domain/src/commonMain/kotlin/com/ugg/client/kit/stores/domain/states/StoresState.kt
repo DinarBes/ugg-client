@@ -9,6 +9,8 @@ data class StoresState(
     /** Store highlighted by a tap on its map marker. */
     val selectedStoreId: String? = null,
     val isLoading: Boolean = false,
+    /** Pull-to-refresh in progress: the content stays on screen under the spinner. */
+    val isRefreshing: Boolean = false,
     val error: Throwable? = null,
 ) {
     val cities: List<String>

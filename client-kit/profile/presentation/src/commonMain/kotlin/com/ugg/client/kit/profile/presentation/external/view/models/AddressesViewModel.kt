@@ -24,7 +24,7 @@ class AddressesViewModel(
     private val unexpectedExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Logger.e(throwable) { this@AddressesViewModel::class.toString() }
 
-        state.update { it.copy(error = throwable, isLoading = false) }
+        state.update { it.copy(error = throwable, isLoading = false, isRefreshing = false) }
     }
 
     private var observing: Job? = null
@@ -34,13 +34,26 @@ class AddressesViewModel(
     }
 
     /** Live: an address saved on the form shows up here as soon as the form closes. */
-    fun observe() {
+    fun observe() = subscribe(isRefresh = false)
+
+    /**
+     * Pull-to-refresh. The data is live already (a Firestore listener); this restarts the
+     * subscription, so a broken one (network was lost, rules changed) gets a fresh start.
+     */
+    fun refresh() {
+        if (state.value.isRefreshing) return
+        // Set right away, not inside the coroutine: a second pull before it starts is ignored.
+        state.update { it.copy(isRefreshing = true) }
+        subscribe(isRefresh = true)
+    }
+
+    private fun subscribe(isRefresh: Boolean) {
         observing?.cancel()
         observing = viewModelScope.launch(unexpectedExceptionHandler) {
-            state.update { it.copy(isLoading = true, error = null) }
+            if (!isRefresh) state.update { it.copy(isLoading = true, error = null) }
 
             useCase.observeAddresses().collect { addresses ->
-                state.update { it.copy(addresses = addresses, isLoading = false, error = null) }
+                state.update { it.copy(addresses = addresses, isLoading = false, isRefreshing = false, error = null) }
             }
         }
     }

@@ -1,5 +1,9 @@
 package com.ugg.client.kit.product.presentation.internal.view
 
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import com.ugg.client.kit.core.presentation.external.components.UggPullToRefreshBox
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,9 +35,11 @@ internal fun ProductView(
     selection: ProductSelection,
     expandedDetail: Int?,
     isLoading: Boolean,
+    isRefreshing: Boolean,
     error: Throwable?,
     contentPadding: PaddingValues,
     onRetry: () -> Unit,
+    onRefresh: () -> Unit,
     onBack: (() -> Unit)?,
     onShare: () -> Unit,
     onSelectShade: (String) -> Unit,
@@ -43,41 +49,49 @@ internal fun ProductView(
     onToggleDetail: (Int) -> Unit,
     onAddToCart: () -> Unit,
 ) {
-    when {
-        product != null -> ProductContent(
-            product = product,
-            selection = selection,
-            expandedDetail = expandedDetail,
-            contentPadding = contentPadding,
-            onBack = onBack,
-            onShare = onShare,
-            onSelectShade = onSelectShade,
-            onSelectHeight = onSelectHeight,
-            onSelectSize = onSelectSize,
-            onOpenSizeChart = onOpenSizeChart,
-            onToggleDetail = onToggleDetail,
-            onAddToCart = onAddToCart,
-        )
-
-        error != null -> Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-                .padding(horizontal = UggTheme.spacing.screenHorizontal),
-            verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = error.message ?: "Не удалось загрузить",
-                style = UggTheme.typography.body,
-                color = UggTheme.colors.contentSecondary,
-                textAlign = TextAlign.Center,
+    UggPullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
+        // The photo runs under the status bar; the spinner comes out below it.
+        indicatorPadding = WindowInsets.statusBars.asPaddingValues(),
+    ) {
+        when {
+            product != null -> ProductContent(
+                product = product,
+                selection = selection,
+                expandedDetail = expandedDetail,
+                contentPadding = contentPadding,
+                onBack = onBack,
+                onShare = onShare,
+                onSelectShade = onSelectShade,
+                onSelectHeight = onSelectHeight,
+                onSelectSize = onSelectSize,
+                onOpenSizeChart = onOpenSizeChart,
+                onToggleDetail = onToggleDetail,
+                onAddToCart = onAddToCart,
             )
-            UggButton(text = "Повторить", onClick = onRetry, style = UggButtonStyle.Secondary, showArrow = false)
-        }
 
-        isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = UggTheme.colors.accent)
+            error != null -> Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
+                    .padding(horizontal = UggTheme.spacing.screenHorizontal),
+                verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = error.message ?: "Не удалось загрузить",
+                    style = UggTheme.typography.body,
+                    color = UggTheme.colors.contentSecondary,
+                    textAlign = TextAlign.Center,
+                )
+                UggButton(text = "Повторить", onClick = onRetry, style = UggButtonStyle.Secondary, showArrow = false)
+            }
+
+            isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = UggTheme.colors.accent)
+            }
         }
     }
 }

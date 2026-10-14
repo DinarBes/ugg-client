@@ -1,5 +1,6 @@
 package com.ugg.client.kit.home.presentation.internal.view
 
+import com.ugg.client.kit.core.presentation.external.components.UggPullToRefreshBox
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,31 +28,40 @@ internal fun HomeView(
     home: Home?,
     cartCount: Int,
     isLoading: Boolean,
+    isRefreshing: Boolean,
     error: Throwable?,
     contentPadding: PaddingValues,
     onRetry: () -> Unit,
+    onRefresh: () -> Unit,
     onChooseModel: () -> Unit,
     onOpenStores: () -> Unit,
     onOpenStory: () -> Unit,
     onOpenCare: () -> Unit,
     onOpenCart: () -> Unit,
 ) {
-    when {
-        home != null -> HomeContent(
-            home = home,
-            cartCount = cartCount,
-            contentPadding = contentPadding,
-            onChooseModel = onChooseModel,
-            onOpenStores = onOpenStores,
-            onOpenStory = onOpenStory,
-            onOpenCare = onOpenCare,
-            onOpenCart = onOpenCart,
-        )
+    UggPullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
+        indicatorPadding = PaddingValues(top = contentPadding.calculateTopPadding()),
+    ) {
+        when {
+            home != null -> HomeContent(
+                home = home,
+                cartCount = cartCount,
+                contentPadding = contentPadding,
+                onChooseModel = onChooseModel,
+                onOpenStores = onOpenStores,
+                onOpenStory = onOpenStory,
+                onOpenCare = onOpenCare,
+                onOpenCart = onOpenCart,
+            )
 
-        error != null -> HomeError(error, onRetry, Modifier.padding(contentPadding))
+            error != null -> HomeError(error, onRetry, Modifier.padding(contentPadding))
 
-        isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = UggTheme.colors.accent)
+            isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = UggTheme.colors.accent)
+            }
         }
     }
 }

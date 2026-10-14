@@ -71,6 +71,28 @@ class ProfileViewModelTest {
         assertEquals("Анна", vm.state.value.profile?.name)
     }
 
+    @Test
+    fun refreshResubscribesAndStops() = runTest {
+        var subscriptions = 0
+        val useCase = object : ProfileUseCase {
+            override fun observeProfile(): Flow<Profile?> = flow {
+                subscriptions++
+                emit(Profile(name = "Анна #$subscriptions"))
+            }
+            override suspend fun signOut() = Unit
+        }
+        val vm = ProfileViewModel(useCase)
+        advanceUntilIdle()
+
+        vm.refresh()
+        assertTrue(vm.state.value.isRefreshing)
+        advanceUntilIdle()
+
+        assertEquals(2, subscriptions)
+        assertEquals("Анна #2", vm.state.value.profile?.name)
+        assertFalse(vm.state.value.isRefreshing)
+    }
+
     private class FakeUseCase(profile: Profile?) : ProfileUseCase {
         private val profile = MutableStateFlow(profile)
         override fun observeProfile(): Flow<Profile?> = profile

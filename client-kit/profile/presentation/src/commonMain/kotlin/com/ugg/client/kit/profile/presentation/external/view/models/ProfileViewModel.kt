@@ -25,7 +25,7 @@ class ProfileViewModel(
     private val unexpectedExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Logger.e(throwable) { this@ProfileViewModel::class.toString() }
 
-        state.update { it.copy(error = throwable, isLoading = false) }
+        state.update { it.copy(error = throwable, isLoading = false, isRefreshing = false) }
     }
 
     private var observing: Job? = null
@@ -35,10 +35,23 @@ class ProfileViewModel(
     }
 
     /** (Re)subscribes to the profile; «Повторить» after an error lands here. */
-    fun observe() {
+    fun observe() = subscribe(isRefresh = false)
+
+    /**
+     * Pull-to-refresh. The data is live already (a Firestore listener); this restarts the
+     * subscription, so a broken one (network was lost, rules changed) gets a fresh start.
+     */
+    fun refresh() {
+        if (state.value.isRefreshing) return
+        // Set right away, not inside the coroutine: a second pull before it starts is ignored.
+        state.update { it.copy(isRefreshing = true) }
+        subscribe(isRefresh = true)
+    }
+
+    private fun subscribe(isRefresh: Boolean) {
         observing?.cancel()
         observing = viewModelScope.launch(unexpectedExceptionHandler) {
-            state.update { it.copy(isLoading = true, error = null) }
+            if (!isRefresh) state.update { it.copy(isLoading = true, error = null) }
 
             useCase.observeProfile().collect(::show)
         }
@@ -49,7 +62,7 @@ class ProfileViewModel(
     }
 
     private fun show(profile: Profile?) = state.update {
-        it.copy(profile = profile, isGuest = profile == null, isLoading = false, error = null)
+        it.copy(profile = profile, isGuest = profile == null, isLoading = false, isRefreshing = false, error = null)
     }
 }
 

@@ -1,5 +1,6 @@
 package com.ugg.client.kit.stores.presentation.internal.view
 
+import com.ugg.client.kit.core.presentation.external.components.UggPullToRefreshBox
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,9 +51,11 @@ internal fun StoresView(
     city: String?,
     selectedStoreId: String?,
     isLoading: Boolean,
+    isRefreshing: Boolean,
     error: Throwable?,
     contentPadding: PaddingValues,
     onRetry: () -> Unit,
+    onRefresh: () -> Unit,
     onSelectCity: (String?) -> Unit,
     onSelectStore: (String?) -> Unit,
     onRoute: (Store) -> Unit,
@@ -62,65 +65,72 @@ internal fun StoresView(
     val scope = rememberCoroutineScope()
     val horizontal = UggTheme.spacing.screenHorizontal
 
-    when {
-        totalCount > 0 -> LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = contentPadding,
-        ) {
-            item(key = "header") { Header() }
+    UggPullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
+        indicatorPadding = PaddingValues(top = contentPadding.calculateTopPadding()),
+    ) {
+        when {
+            totalCount > 0 -> LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = contentPadding,
+            ) {
+                item(key = "header") { Header() }
 
-            item(key = "map") {
-                StoresMap(
-                    stores = stores,
-                    selectedStoreId = selectedStoreId,
-                    onStoreTap = { id ->
-                        onSelectStore(id)
-                        // Bring the tapped store's card into view under the map.
-                        val index = stores.indexOfFirst { it.id == id }
-                        if (index >= 0) scope.launch { listState.animateScrollToItem(ITEMS_BEFORE_STORES + index) }
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = horizontal, vertical = UggTheme.spacing.s)
-                        .fillMaxWidth()
-                        .height(300.dp),
+                item(key = "map") {
+                    StoresMap(
+                        stores = stores,
+                        selectedStoreId = selectedStoreId,
+                        onStoreTap = { id ->
+                            onSelectStore(id)
+                            // Bring the tapped store's card into view under the map.
+                            val index = stores.indexOfFirst { it.id == id }
+                            if (index >= 0) scope.launch { listState.animateScrollToItem(ITEMS_BEFORE_STORES + index) }
+                        },
+                        modifier = Modifier
+                            .padding(horizontal = horizontal, vertical = UggTheme.spacing.s)
+                            .fillMaxWidth()
+                            .height(300.dp),
+                    )
+                }
+
+                item(key = "filter") {
+                    CityFilter(cities = cities, totalCount = totalCount, city = city, onSelect = onSelectCity)
+                }
+
+                items(stores, key = { it.id }) { store ->
+                    StoreCard(
+                        store = store,
+                        isSelected = store.id == selectedStoreId,
+                        onClick = { onSelectStore(store.id) },
+                        onRoute = { onRoute(store) },
+                        onCall = { onCall(store) },
+                        modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
+                    )
+                }
+
+                item(key = "bottom") { Spacer(Modifier.height(UggTheme.spacing.l)) }
+            }
+
+            error != null -> Column(
+                modifier = Modifier.fillMaxSize().padding(contentPadding).padding(horizontal = horizontal),
+                verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = error.message ?: "Не удалось загрузить",
+                    style = UggTheme.typography.body,
+                    color = UggTheme.colors.contentSecondary,
+                    textAlign = TextAlign.Center,
                 )
+                UggButton(text = "Повторить", onClick = onRetry, style = UggButtonStyle.Secondary, showArrow = false)
             }
 
-            item(key = "filter") {
-                CityFilter(cities = cities, totalCount = totalCount, city = city, onSelect = onSelectCity)
+            isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = UggTheme.colors.accent)
             }
-
-            items(stores, key = { it.id }) { store ->
-                StoreCard(
-                    store = store,
-                    isSelected = store.id == selectedStoreId,
-                    onClick = { onSelectStore(store.id) },
-                    onRoute = { onRoute(store) },
-                    onCall = { onCall(store) },
-                    modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
-                )
-            }
-
-            item(key = "bottom") { Spacer(Modifier.height(UggTheme.spacing.l)) }
-        }
-
-        error != null -> Column(
-            modifier = Modifier.fillMaxSize().padding(contentPadding).padding(horizontal = horizontal),
-            verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = error.message ?: "Не удалось загрузить",
-                style = UggTheme.typography.body,
-                color = UggTheme.colors.contentSecondary,
-                textAlign = TextAlign.Center,
-            )
-            UggButton(text = "Повторить", onClick = onRetry, style = UggButtonStyle.Secondary, showArrow = false)
-        }
-
-        isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = UggTheme.colors.accent)
         }
     }
 }

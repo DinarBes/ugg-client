@@ -26,9 +26,11 @@ fun StoresScreen(contentPadding: PaddingValues) {
         city = state.city,
         selectedStoreId = state.selectedStoreId,
         isLoading = state.isLoading,
+        isRefreshing = state.isRefreshing,
         error = state.error,
         contentPadding = contentPadding,
         onRetry = { viewModel.fetch() },
+        onRefresh = { viewModel.refresh() },
         onSelectCity = { viewModel.selectCity(it) },
         onSelectStore = { viewModel.selectStore(it) },
         // A store without a phone in the database has an empty link; nothing to open then.

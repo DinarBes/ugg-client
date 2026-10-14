@@ -1,5 +1,6 @@
 package com.ugg.client.kit.profile.presentation.internal.view
 
+import com.ugg.client.kit.core.presentation.external.components.UggPullToRefreshBox
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,9 +38,11 @@ internal fun ProfileView(
     profile: Profile?,
     isGuest: Boolean,
     isLoading: Boolean,
+    isRefreshing: Boolean,
     error: Throwable?,
     contentPadding: PaddingValues,
     onRetry: () -> Unit,
+    onRefresh: () -> Unit,
     onSignIn: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenOrder: () -> Unit,
@@ -49,93 +52,100 @@ internal fun ProfileView(
 ) {
     val horizontal = UggTheme.spacing.screenHorizontal
 
-    when {
-        profile != null -> LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = contentPadding,
-        ) {
-            item(key = "header") { Header(onOpenSettings = onOpenSettings) }
-            item(key = "user") { UserRow(profile) }
+    UggPullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
+        indicatorPadding = PaddingValues(top = contentPadding.calculateTopPadding()),
+    ) {
+        when {
+            profile != null -> LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = contentPadding,
+            ) {
+                item(key = "header") { Header(onOpenSettings = onOpenSettings) }
+                item(key = "user") { UserRow(profile) }
 
-            profile.activeOrder?.let { order ->
-                item(key = "order") {
-                    ActiveOrderCard(
-                        order = order,
-                        onClick = onOpenOrder,
+                profile.activeOrder?.let { order ->
+                    item(key = "order") {
+                        ActiveOrderCard(
+                            order = order,
+                            onClick = onOpenOrder,
+                            modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
+                        )
+                    }
+                }
+
+                item(key = "quick") {
+                    Row(
+                        modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        QuickCard(
+                            icon = UggIcons.Ruler,
+                            title = "Мой размер",
+                            value = profile.size ?: "не выбран",
+                            onClick = onOpenSize,
+                            modifier = Modifier.weight(1f),
+                        )
+                        QuickCard(
+                            icon = UggIcons.Package,
+                            title = "Мои заказы",
+                            value = profile.ordersSummary,
+                            onClick = onOpenOrders,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+
+                if (profile.menu.isNotEmpty()) {
+                    item(key = "menu") {
+                        Menu(
+                            items = profile.menu,
+                            onClick = onMenuItem,
+                            modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
+                        )
+                    }
+                }
+            }
+
+            isGuest -> LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = contentPadding,
+            ) {
+                item(key = "header") { Header(onOpenSettings = onOpenSettings) }
+                item(key = "guest") {
+                    GuestCard(
+                        onSignIn = onSignIn,
                         modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
                     )
                 }
-            }
-
-            item(key = "quick") {
-                Row(
-                    modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    QuickCard(
-                        icon = UggIcons.Ruler,
-                        title = "Мой размер",
-                        value = profile.size ?: "не выбран",
-                        onClick = onOpenSize,
-                        modifier = Modifier.weight(1f),
-                    )
-                    QuickCard(
-                        icon = UggIcons.Package,
-                        title = "Мои заказы",
-                        value = profile.ordersSummary,
-                        onClick = onOpenOrders,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-            }
-
-            if (profile.menu.isNotEmpty()) {
                 item(key = "menu") {
                     Menu(
-                        items = profile.menu,
+                        items = GUEST_MENU,
                         onClick = onMenuItem,
                         modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
                     )
                 }
             }
-        }
 
-        isGuest -> LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = contentPadding,
-        ) {
-            item(key = "header") { Header(onOpenSettings = onOpenSettings) }
-            item(key = "guest") {
-                GuestCard(
-                    onSignIn = onSignIn,
-                    modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
+            error != null -> Column(
+                modifier = Modifier.fillMaxSize().padding(contentPadding).padding(horizontal = horizontal),
+                verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = error.message ?: "Не удалось загрузить",
+                    style = UggTheme.typography.body,
+                    color = UggTheme.colors.contentSecondary,
+                    textAlign = TextAlign.Center,
                 )
+                UggButton(text = "Повторить", onClick = onRetry, style = UggButtonStyle.Secondary, showArrow = false)
             }
-            item(key = "menu") {
-                Menu(
-                    items = GUEST_MENU,
-                    onClick = onMenuItem,
-                    modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
-                )
+
+            isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = UggTheme.colors.accent)
             }
-        }
-
-        error != null -> Column(
-            modifier = Modifier.fillMaxSize().padding(contentPadding).padding(horizontal = horizontal),
-            verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = error.message ?: "Не удалось загрузить",
-                style = UggTheme.typography.body,
-                color = UggTheme.colors.contentSecondary,
-                textAlign = TextAlign.Center,
-            )
-            UggButton(text = "Повторить", onClick = onRetry, style = UggButtonStyle.Secondary, showArrow = false)
-        }
-
-        isLoading -> Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = UggTheme.colors.accent)
         }
     }
 }

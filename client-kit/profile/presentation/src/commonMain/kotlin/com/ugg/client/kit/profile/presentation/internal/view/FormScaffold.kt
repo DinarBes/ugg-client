@@ -23,13 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import com.ugg.client.kit.core.presentation.external.components.UggButton
 import com.ugg.client.kit.core.presentation.external.components.UggButtonStyle
 import com.ugg.client.kit.core.presentation.external.components.UggIconButton
+import com.ugg.client.kit.core.presentation.external.components.UggPullToRefreshBox
 import com.ugg.client.kit.core.presentation.external.icons.UggIcons
 import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 
 /**
  * The frame of the profile's forms: back and title on top, scrolling content, actions pinned at
  * the bottom above the keyboard. While [isLoading] the content is a spinner; a [loadError] shows
- * with «Повторить» instead of the content.
+ * with «Повторить» instead of the content. With [onRefresh] the content can be pulled down to refresh.
  */
 @Composable
 internal fun FormScaffold(
@@ -38,6 +39,8 @@ internal fun FormScaffold(
     isLoading: Boolean = false,
     loadError: Throwable? = null,
     onRetry: () -> Unit = {},
+    isRefreshing: Boolean = false,
+    onRefresh: (() -> Unit)? = null,
     bottom: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -80,15 +83,26 @@ internal fun FormScaffold(
             }
 
             else -> {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = horizontal, vertical = UggTheme.spacing.m),
-                    verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m),
-                    content = content,
-                )
+                val scrolling: @Composable () -> Unit = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = horizontal, vertical = UggTheme.spacing.m),
+                        verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m),
+                        content = content,
+                    )
+                }
+
+                if (onRefresh != null) {
+                    UggPullToRefreshBox(
+                        isRefreshing = isRefreshing,
+                        onRefresh = onRefresh,
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                    ) { scrolling() }
+                } else {
+                    Box(Modifier.weight(1f).fillMaxWidth()) { scrolling() }
+                }
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = horizontal, vertical = UggTheme.spacing.s),
                     horizontalAlignment = Alignment.CenterHorizontally,
