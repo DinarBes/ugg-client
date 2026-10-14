@@ -146,7 +146,7 @@ internal fun StatsSection(stats: List<HomeStat>) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         stats.forEach { stat ->
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(text = stat.value, style = UggTheme.typography.displayL, color = colors.accentStrong)
                 Text(text = stat.caption, style = UggTheme.typography.caption, color = colors.contentSecondary)
             }
