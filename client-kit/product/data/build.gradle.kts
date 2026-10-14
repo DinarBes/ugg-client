@@ -11,6 +11,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.clientKit.productDomain)
             implementation(projects.clientKit.coreDomain)
+            implementation(projects.clientKit.coreData)
         }
     }
 }

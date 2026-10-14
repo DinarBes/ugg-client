@@ -31,7 +31,9 @@ fun StoresScreen(contentPadding: PaddingValues) {
         onRetry = { viewModel.fetch() },
         onSelectCity = { viewModel.selectCity(it) },
         onSelectStore = { viewModel.selectStore(it) },
-        onRoute = { uriHandler.openUri(it.routeUri) },
-        onCall = { uriHandler.openUri(it.phoneUri) },
+        // A store without a phone in the database has an empty link; nothing to open then.
+        // runCatching: openUri throws when no app on the device can handle the link.
+        onRoute = { store -> store.routeUri.takeIf { it.isNotEmpty() }?.let { runCatching { uriHandler.openUri(it) } } },
+        onCall = { store -> store.phoneUri.takeIf { it.isNotEmpty() }?.let { runCatching { uriHandler.openUri(it) } } },
     )
 }

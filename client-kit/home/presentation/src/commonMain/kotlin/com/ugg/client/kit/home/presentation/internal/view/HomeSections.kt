@@ -56,7 +56,9 @@ internal fun HomeHeader(cartCount: Int, onOpenFavorites: () -> Unit, onOpenCart:
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column {
+        Column(
+            horizontalAlignment = Alignment.Start
+        ) {
             Text(
                 text = BRAND_NAME,
                 style = UggTheme.typography.displayM.copy(fontSize = 24.sp, lineHeight = 28.sp, letterSpacing = 0.32.em),
