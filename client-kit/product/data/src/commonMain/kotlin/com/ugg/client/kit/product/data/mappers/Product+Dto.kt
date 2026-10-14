@@ -20,7 +20,8 @@ internal fun ProductDto.toDomain() = Product(
     leadTime = leadTimeDays.toLeadTime(),
     description = description,
     photoCount = photos.size,
-    shades = shades.map { ProductShade(id = it.id, name = it.name, color = it.color.toArgb()) },
+    // A shade switched off in the admin app («в наличии») can't be ordered, so it isn't offered.
+    shades = shades.filter { it.inStock }.map { ProductShade(id = it.id, name = it.name, color = it.color.toArgb()) },
     heights = heights.map { ProductHeight(id = it.id, name = it.name, value = "${it.heightCm} см") },
     sizes = sizes.map { ProductSize(label = it.label, isAvailable = it.available) },
     customSizeHint = customSizeHint?.takeIf { it.isNotBlank() },

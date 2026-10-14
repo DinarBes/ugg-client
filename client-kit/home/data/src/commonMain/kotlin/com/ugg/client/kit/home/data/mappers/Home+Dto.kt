@@ -30,7 +30,8 @@ internal fun homeFrom(content: HomeContentDto, product: ProductDto, stores: List
         leadTime = product.leadTimeDays.toLeadTime(),
     ),
     stats = content.stats.map { HomeStat(value = it.value, caption = it.caption) },
-    shades = product.shades.map { Shade(id = it.id, name = it.name, color = it.color.toArgb(), isInStock = it.inStock) },
+    // The same shades the «Модель» tab offers: the ones switched off in the admin app are left out.
+    shades = product.shades.filter { it.inStock }.map { Shade(id = it.id, name = it.name, color = it.color.toArgb(), isInStock = it.inStock) },
     craftSteps = content.craftSteps.map { it.toCraftStep() },
     quote = content.quote?.let { MasterQuote(text = it.text, author = it.author, role = it.role) },
     stores = stores.map { it.toPreview(now) },

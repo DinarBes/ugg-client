@@ -62,7 +62,11 @@ class SharedProductUseCaseTest {
             price = 14900,
             leadTimeDays = ProductDto.LeadTimeDto(min = 5, max = 7),
             photos = listOf("products/classic/chestnut/1.jpg", "products/classic/chestnut/2.jpg"),
-            shades = listOf(ProductDto.ShadeDto(id = "chestnut", name = "Каштан", color = "#B98A5E")),
+            shades = listOf(
+                ProductDto.ShadeDto(id = "chestnut", name = "Каштан", color = "#B98A5E"),
+                // Switched off in the admin app: not offered.
+                ProductDto.ShadeDto(id = "graphite", name = "Графит", color = "#5E5B57", inStock = false),
+            ),
             heights = listOf(ProductDto.HeightDto(id = "standard", name = "Стандарт", heightCm = 22)),
             sizes = listOf(ProductDto.SizeDto("38", available = true), ProductDto.SizeDto("44", available = false)),
             customSizeHint = " ",

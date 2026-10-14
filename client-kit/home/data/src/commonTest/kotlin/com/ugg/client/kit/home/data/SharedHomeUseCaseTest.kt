@@ -34,7 +34,7 @@ class SharedHomeUseCaseTest {
         assertEquals("14 900 ₽", home.hero.price)
         assertEquals("шьём под заказ за 5–7 дней", home.hero.leadTime)
         assertEquals(0xFFB98A5E, home.shades.single().color)
-        assertEquals(false, home.shades.single().isInStock)
+        assertEquals(true, home.shades.single().isInStock)
         assertEquals("3 минуты чтения", home.care?.readTime)
         assertEquals(listOf("до 20:00", "откроется в пт"), home.stores.map { it.hours })
         assertEquals(listOf(true, false), home.stores.map { it.isOpen })
@@ -68,7 +68,11 @@ class SharedHomeUseCaseTest {
             title = "Классика",
             price = 14900,
             leadTimeDays = ProductDto.LeadTimeDto(min = 5, max = 7),
-            shades = listOf(ProductDto.ShadeDto(id = "chestnut", name = "Каштан", color = "#B98A5E", inStock = false)),
+            shades = listOf(
+                ProductDto.ShadeDto(id = "chestnut", name = "Каштан", color = "#B98A5E", inStock = true),
+                // Switched off in the admin app: not shown.
+                ProductDto.ShadeDto(id = "graphite", name = "Графит", color = "#5E5B57", inStock = false),
+            ),
         )
 
         override suspend fun stores() = listOf(
