@@ -14,8 +14,12 @@ data class UserDto(
     /** Epoch milliseconds, set by the server on the first save. */
     val createdAt: Long? = null,
 ) {
+    /**
+     * [label]: «38»; [heightId]: `standard` / `tall`; [footLengthCm]: the measured foot,
+     * so the master can sew to measure when the size grid does not fit.
+     */
     @Serializable
-    data class UserSizeDto(val label: String = "", val heightId: String = "")
+    data class UserSizeDto(val label: String = "", val heightId: String = "", val footLengthCm: Double? = null)
 }
 
 /** `users/{uid}/addresses/{id}`. */

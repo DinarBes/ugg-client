@@ -23,6 +23,10 @@ import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
 import com.ugg.client.kit.navigation.presentation.internal.view.MainTab
 import com.ugg.client.kit.navigation.presentation.internal.view.MainTabsView
 import com.ugg.client.kit.onboarding.presentation.external.view.OnboardingScreen
+import com.ugg.client.kit.profile.domain.entities.ProfileFlow
+import com.ugg.client.kit.profile.presentation.external.view.AddressFormScreen
+import com.ugg.client.kit.profile.presentation.external.view.AddressesScreen
+import com.ugg.client.kit.profile.presentation.external.view.SizeScreen
 import com.ugg.client.kit.splash.domain.entities.SplashDestination
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
 import com.ugg.client.kit.splash.presentation.external.view.SplashScreen
@@ -58,6 +62,9 @@ fun NavigationScreen() {
                 subclass(AuthFlow.Otp::class, AuthFlow.Otp.serializer())
                 subclass(StoryFlow.Story::class, StoryFlow.Story.serializer())
                 subclass(CartFlow.Cart::class, CartFlow.Cart.serializer())
+                subclass(ProfileFlow.Size::class, ProfileFlow.Size.serializer())
+                subclass(ProfileFlow.Addresses::class, ProfileFlow.Addresses.serializer())
+                subclass(ProfileFlow.AddressForm::class, ProfileFlow.AddressForm.serializer())
             }
         }
     }
@@ -105,6 +112,8 @@ fun NavigationScreen() {
                     // After the code is confirmed the splash brings the app back to Launch; the
                     // selected tab is kept, so the user lands on the profile, now signed in.
                     onSignIn = { navigationContext.tryNavigate(SplashFlow.Auth) },
+                    onOpenSize = { navigationContext.tryNavigate(ProfileFlow.Size) },
+                    onOpenAddresses = { navigationContext.tryNavigate(ProfileFlow.Addresses) },
                 )
             }
             entry<StoryFlow.Story> {
@@ -131,6 +140,15 @@ fun NavigationScreen() {
             entry<SplashFlow.Registration> {
                 // Pushed over Launch by the splash after the first sign-in; closing it pops back.
                 RegistrationScreen()
+            }
+            entry<ProfileFlow.Size> {
+                SizeScreen(onBack = { navigationContext.back() })
+            }
+            entry<ProfileFlow.Addresses> {
+                AddressesScreen(onBack = { navigationContext.back() })
+            }
+            entry<ProfileFlow.AddressForm> {
+                AddressFormScreen(addressId = it.addressId, onBack = { navigationContext.back() })
             }
             entry<AuthFlow.Otp> {
                 OtpScreen(phone = it.phone, sessionId = it.sessionId, onBack = { navigationContext.back() })

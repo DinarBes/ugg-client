@@ -11,6 +11,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.clientKit.profileData)
             implementation(projects.clientKit.profileDomain)
+            implementation(projects.clientKit.navigationDomain)
 
             implementation(projects.clientKit.coreDomain)
             implementation(projects.clientKit.coreData)

@@ -10,6 +10,7 @@ import com.ugg.client.kit.core.presentation.external.icons.UggIcons
 import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 import com.ugg.client.kit.home.presentation.external.view.HomeScreen
 import com.ugg.client.kit.product.presentation.external.view.ProductScreen
+import com.ugg.client.kit.profile.domain.entities.ProfileMenuItem
 import com.ugg.client.kit.profile.presentation.external.view.ProfileScreen
 import com.ugg.client.kit.stores.presentation.external.view.StoresScreen
 
@@ -32,6 +33,8 @@ internal fun MainTabsView(
     onOpenStory: () -> Unit,
     onOpenCart: () -> Unit,
     onSignIn: () -> Unit,
+    onOpenSize: () -> Unit,
+    onOpenAddresses: () -> Unit,
 ) {
     val tabs = MainTab.entries
 
@@ -61,7 +64,17 @@ internal fun MainTabsView(
 
             MainTab.Stores -> StoresScreen(contentPadding = padding)
 
-            MainTab.Profile -> ProfileScreen(contentPadding = padding, onSignIn = onSignIn)
+            MainTab.Profile -> ProfileScreen(
+                contentPadding = padding,
+                onSignIn = onSignIn,
+                onOpenSize = onOpenSize,
+                onMenuItem = { kind ->
+                    when (kind) {
+                        ProfileMenuItem.Kind.Addresses -> onOpenAddresses()
+                        else -> Unit
+                    }
+                },
+            )
         }
     }
 }

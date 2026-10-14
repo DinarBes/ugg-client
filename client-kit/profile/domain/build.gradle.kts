@@ -9,8 +9,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // api: ProfileUseCase exposes a Flow.
+            // api: the use cases expose Flows.
             api(libs.kotlinx.coroutines.core)
+
+            implementation(projects.clientKit.navigationDomain)
         }
     }
 }

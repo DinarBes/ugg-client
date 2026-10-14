@@ -29,7 +29,7 @@ internal fun profileFrom(auth: AuthUser, user: UserDto?, orders: List<OrderDto>)
         initials = name.initials(),
         phone = phone.formatPhone(),
         activeOrder = active.maxByOrNull { it.createdAt ?: 0 }?.toActiveOrder(),
-        size = user?.size?.let { size -> listOfNotNull(size.label, size.heightId.heightName()).joinToString(" · ") },
+        size = user?.size?.toSummary(),
         ordersSummary = ordersSummary(activeCount = active.size, total = orders.size),
         menu = SIGNED_IN_MENU,
     )
@@ -78,6 +78,19 @@ private fun String.initials() = split(' ')
     .filter { it.isNotBlank() }
     .take(2)
     .joinToString("") { it.first().uppercase() }
+
+/** «38 · стандарт», or «стопа 24,5 см» when only the foot was measured; `null` when nothing is set. */
+internal fun UserDto.UserSizeDto.toSummary(): String? {
+    val parts = listOfNotNull(label.takeIf { it.isNotBlank() }, heightId.heightName())
+    if (parts.isNotEmpty()) return parts.joinToString(" · ")
+    return footLengthCm?.let { "стопа ${it.toCentimeters()} см" }
+}
+
+/** 24.5 → «24,5», 25.0 → «25». */
+internal fun Double.toCentimeters(): String {
+    val tenths = kotlin.math.round(this * 10).toLong()
+    return if (tenths % 10 == 0L) "${tenths / 10}" else "${tenths / 10},${tenths % 10}"
+}
 
 private fun String.heightName(): String? = when (this) {
     "" -> null
