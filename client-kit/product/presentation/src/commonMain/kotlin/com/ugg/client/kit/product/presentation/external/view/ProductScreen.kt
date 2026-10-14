@@ -22,7 +22,6 @@ fun ProductScreen(
     onAddToCart: () -> Unit,
     onBack: (() -> Unit)? = null,
     onShare: () -> Unit = {},
-    onToggleFavorite: () -> Unit = {},
     onOpenSizeChart: () -> Unit = {},
 ) {
     val viewModel: ProductViewModel by rememberViewModel()
@@ -38,7 +37,6 @@ fun ProductScreen(
         onRetry = { viewModel.fetch() },
         onBack = onBack,
         onShare = onShare,
-        onToggleFavorite = onToggleFavorite,
         onSelectShade = { viewModel.selectShade(it) },
         onSelectHeight = { viewModel.selectHeight(it) },
         onSelectSize = { viewModel.selectSize(it) },

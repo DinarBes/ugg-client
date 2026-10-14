@@ -16,7 +16,6 @@ import org.kodein.di.compose.viewmodel.rememberViewModel
 fun StoryScreen(
     onBack: () -> Unit,
     onChooseModel: () -> Unit,
-    onToggleFavorite: () -> Unit = {},
 ) {
     val viewModel: StoryViewModel by rememberViewModel()
     val state by viewModel.state.collectAsState()
@@ -27,7 +26,6 @@ fun StoryScreen(
         error = state.error,
         onRetry = { viewModel.fetch() },
         onBack = onBack,
-        onToggleFavorite = onToggleFavorite,
         onChooseModel = onChooseModel,
     )
 }

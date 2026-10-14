@@ -49,11 +49,10 @@ internal fun StoryView(
     error: Throwable?,
     onRetry: () -> Unit,
     onBack: () -> Unit,
-    onToggleFavorite: () -> Unit,
     onChooseModel: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize().background(UggTheme.colors.background)) {
-        TopBar(onBack = onBack, onToggleFavorite = onToggleFavorite)
+        TopBar(onBack = onBack)
 
         when {
             story != null -> StoryContent(story = story, onChooseModel = onChooseModel)
@@ -83,7 +82,7 @@ internal fun StoryView(
 }
 
 @Composable
-private fun TopBar(onBack: () -> Unit, onToggleFavorite: () -> Unit) {
+private fun TopBar(onBack: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,7 +91,6 @@ private fun TopBar(onBack: () -> Unit, onToggleFavorite: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         UggIconButton(icon = UggIcons.ArrowLeft, contentDescription = "Назад", onClick = onBack)
-        UggIconButton(icon = UggIcons.Heart, contentDescription = "В избранное", onClick = onToggleFavorite)
     }
 }
 

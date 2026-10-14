@@ -46,7 +46,7 @@ private const val BRAND_NAME = "БАЙКАЛ"
 private const val BRAND_TAGLINE = "угги ручной работы"
 
 @Composable
-internal fun HomeHeader(cartCount: Int, onOpenFavorites: () -> Unit, onOpenCart: () -> Unit) {
+internal fun HomeHeader(cartCount: Int, onOpenCart: () -> Unit) {
     val colors = UggTheme.colors
 
     Row(
@@ -67,10 +67,7 @@ internal fun HomeHeader(cartCount: Int, onOpenFavorites: () -> Unit, onOpenCart:
             Text(text = BRAND_TAGLINE, style = UggTheme.typography.caption, color = colors.contentSecondary)
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            UggIconButton(icon = UggIcons.Heart, contentDescription = "Избранное", onClick = onOpenFavorites)
-            UggIconButton(icon = UggIcons.Bag, contentDescription = "Корзина", onClick = onOpenCart, hasBadge = cartCount > 0)
-        }
+        UggIconButton(icon = UggIcons.Bag, contentDescription = "Корзина", onClick = onOpenCart, hasBadge = cartCount > 0)
     }
 }
 

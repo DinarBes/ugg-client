@@ -61,7 +61,6 @@ internal fun ProductGallery(
     tint: Long?,
     onBack: (() -> Unit)?,
     onShare: () -> Unit,
-    onToggleFavorite: () -> Unit,
 ) {
     val colors = UggTheme.colors
     val buttonColor = colors.surfaceElevated.copy(alpha = 0.85f)
@@ -96,7 +95,6 @@ internal fun ProductGallery(
             }
             Spacer(Modifier.weight(1f))
             UggIconButton(icon = UggIcons.Share, contentDescription = "Поделиться", onClick = onShare, containerColor = buttonColor)
-            UggIconButton(icon = UggIcons.Heart, contentDescription = "В избранное", onClick = onToggleFavorite, containerColor = buttonColor)
         }
 
         Row(

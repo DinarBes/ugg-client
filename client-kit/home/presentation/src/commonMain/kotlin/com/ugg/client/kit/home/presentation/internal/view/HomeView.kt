@@ -34,7 +34,6 @@ internal fun HomeView(
     onOpenStores: () -> Unit,
     onOpenStory: () -> Unit,
     onOpenCare: () -> Unit,
-    onOpenFavorites: () -> Unit,
     onOpenCart: () -> Unit,
 ) {
     when {
@@ -46,7 +45,6 @@ internal fun HomeView(
             onOpenStores = onOpenStores,
             onOpenStory = onOpenStory,
             onOpenCare = onOpenCare,
-            onOpenFavorites = onOpenFavorites,
             onOpenCart = onOpenCart,
         )
 
@@ -67,7 +65,6 @@ private fun HomeContent(
     onOpenStores: () -> Unit,
     onOpenStory: () -> Unit,
     onOpenCare: () -> Unit,
-    onOpenFavorites: () -> Unit,
     onOpenCart: () -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
@@ -81,7 +78,7 @@ private fun HomeContent(
             bottom = contentPadding.calculateBottomPadding() + UggTheme.spacing.xxl,
         ),
     ) {
-        item(key = "header") { HomeHeader(cartCount = cartCount, onOpenFavorites = onOpenFavorites, onOpenCart = onOpenCart) }
+        item(key = "header") { HomeHeader(cartCount = cartCount, onOpenCart = onOpenCart) }
         item(key = "hero") { HeroSection(hero = home.hero, onChooseModel = onChooseModel) }
 
         if (home.stats.isNotEmpty()) {

@@ -36,7 +36,6 @@ internal fun ProductView(
     onRetry: () -> Unit,
     onBack: (() -> Unit)?,
     onShare: () -> Unit,
-    onToggleFavorite: () -> Unit,
     onSelectShade: (String) -> Unit,
     onSelectHeight: (String) -> Unit,
     onSelectSize: (String) -> Unit,
@@ -52,7 +51,6 @@ internal fun ProductView(
             contentPadding = contentPadding,
             onBack = onBack,
             onShare = onShare,
-            onToggleFavorite = onToggleFavorite,
             onSelectShade = onSelectShade,
             onSelectHeight = onSelectHeight,
             onSelectSize = onSelectSize,
@@ -92,7 +90,6 @@ private fun ProductContent(
     contentPadding: PaddingValues,
     onBack: (() -> Unit)?,
     onShare: () -> Unit,
-    onToggleFavorite: () -> Unit,
     onSelectShade: (String) -> Unit,
     onSelectHeight: (String) -> Unit,
     onSelectSize: (String) -> Unit,
@@ -112,7 +109,6 @@ private fun ProductContent(
                     tint = shade?.color,
                     onBack = onBack,
                     onShare = onShare,
-                    onToggleFavorite = onToggleFavorite,
                 )
             }
             item(key = "thumbnails") {

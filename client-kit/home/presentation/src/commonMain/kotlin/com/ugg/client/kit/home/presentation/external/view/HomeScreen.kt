@@ -21,7 +21,6 @@ fun HomeScreen(
     onOpenStores: () -> Unit,
     onOpenStory: () -> Unit = {},
     onOpenCare: () -> Unit = {},
-    onOpenFavorites: () -> Unit = {},
     onOpenCart: () -> Unit = {},
 ) {
     val viewModel: HomeViewModel by rememberViewModel()
@@ -38,7 +37,6 @@ fun HomeScreen(
         onOpenStores = onOpenStores,
         onOpenStory = onOpenStory,
         onOpenCare = onOpenCare,
-        onOpenFavorites = onOpenFavorites,
         onOpenCart = onOpenCart,
     )
 }
