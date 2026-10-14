@@ -104,6 +104,7 @@ class HomeViewModelTest {
         override suspend fun changeQuantity(lineId: String, delta: Int) = Unit
         override suspend fun selectDelivery(id: String) = Unit
         override suspend fun setGiftWrap(enabled: Boolean) = Unit
+        override suspend fun checkout(): Long = 1024
     }
 
     private class SuccessUseCase : HomeUseCase {

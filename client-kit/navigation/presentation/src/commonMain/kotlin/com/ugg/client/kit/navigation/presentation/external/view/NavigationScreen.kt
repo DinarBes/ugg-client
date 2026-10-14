@@ -145,9 +145,12 @@ fun NavigationScreen() {
                         selectedTab = MainTab.Model
                         navigationContext.back()
                     },
-                    // TODO: checkout — ask for the phone (SplashFlow.Auth) and create the order once
-                    // the orders backend exists.
-                    onCheckout = {},
+                    // After the code the splash brings the app back to Launch; the cart keeps its lines.
+                    onSignIn = { navigationContext.tryNavigate(SplashFlow.Auth) },
+                    onOpenOrders = {
+                        selectedTab = MainTab.Profile
+                        navigationContext.back()
+                    },
                 )
             }
             entry<SplashFlow.Registration> {

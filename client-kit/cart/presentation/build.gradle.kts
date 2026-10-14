@@ -14,6 +14,9 @@ kotlin {
 
             implementation(projects.clientKit.coreDomain)
             implementation(projects.clientKit.corePresentation)
+
+            // TemplateCore: the scope the Firebase services live in.
+            implementation(projects.infrastructure.apiCore)
         }
     }
 }

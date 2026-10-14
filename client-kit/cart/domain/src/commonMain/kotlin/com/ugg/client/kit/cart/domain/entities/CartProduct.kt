@@ -11,4 +11,14 @@ data class CartProduct(
     val unitPrice: Int,
     /** ARGB of the chosen sheepskin, to show the photo in that shade. */
     val color: Long? = null,
+    /** The choice behind [details], written into the order so the master sees ids, not only text. */
+    val options: CartProductOptions? = null,
+)
+
+data class CartProductOptions(
+    val productId: String,
+    val shadeId: String?,
+    val shadeName: String?,
+    val heightId: String?,
+    val size: String?,
 )

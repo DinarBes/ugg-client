@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.ugg.client.kit.cart.domain.entities.Cart
+import com.ugg.client.kit.cart.domain.exceptions.SignInRequiredException
 import com.ugg.client.kit.cart.domain.states.CartState
 import com.ugg.client.kit.cart.domain.useCases.CartUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -40,6 +41,24 @@ class CartViewModel(
     fun selectDelivery(id: String) = viewModelScope.launch(unexpectedExceptionHandler) { useCase.selectDelivery(id) }
 
     fun setGiftWrap(enabled: Boolean) = viewModelScope.launch(unexpectedExceptionHandler) { useCase.setGiftWrap(enabled) }
+
+    /** «Оформить заказ». A guest is sent to sign in first; the cart waits for them. */
+    fun checkout() = viewModelScope.launch(unexpectedExceptionHandler) {
+        if (state.value.isCheckingOut) return@launch
+        state.update { it.copy(isCheckingOut = true, error = null) }
+
+        try {
+            val number = useCase.checkout()
+            state.update { it.copy(placedOrderNumber = number) }
+        } catch (e: SignInRequiredException) {
+            state.update { it.copy(isSignInRequired = true) }
+        } finally {
+            state.update { it.copy(isCheckingOut = false) }
+        }
+    }
+
+    /** The screen showed «Заказ оформлен» or opened the phone step. */
+    fun onCheckoutHandled() = state.update { it.copy(placedOrderNumber = null, isSignInRequired = false) }
 
     private fun observe() = viewModelScope.launch(unexpectedExceptionHandler) {
         useCase.observeCart().collect(::show)

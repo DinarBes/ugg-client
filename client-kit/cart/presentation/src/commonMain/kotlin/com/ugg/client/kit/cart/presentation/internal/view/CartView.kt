@@ -38,6 +38,8 @@ internal fun CartView(
     onSelectDelivery: (String) -> Unit,
     onGiftWrapChange: (Boolean) -> Unit,
     onCheckout: () -> Unit,
+    isCheckingOut: Boolean = false,
+    error: Throwable? = null,
 ) {
     Column(modifier = Modifier.fillMaxSize().background(UggTheme.colors.background)) {
         TopBar(subtitle = cart?.takeUnless { it.isEmpty }?.subtitle, onBack = onBack)
@@ -58,7 +60,7 @@ internal fun CartView(
                     onGiftWrapChange = onGiftWrapChange,
                     modifier = Modifier.weight(1f),
                 )
-                CheckoutBar(onCheckout = onCheckout)
+                CheckoutBar(onCheckout = onCheckout, isCheckingOut = isCheckingOut, error = error)
             }
         }
     }
@@ -167,7 +169,7 @@ private fun SummaryCard(cart: Cart) {
 }
 
 @Composable
-private fun CheckoutBar(onCheckout: () -> Unit) {
+private fun CheckoutBar(onCheckout: () -> Unit, isCheckingOut: Boolean, error: Throwable?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -175,7 +177,21 @@ private fun CheckoutBar(onCheckout: () -> Unit) {
             .padding(horizontal = UggTheme.spacing.screenHorizontal, vertical = UggTheme.spacing.xs),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        UggButton(text = "Оформить заказ", onClick = onCheckout, modifier = Modifier.fillMaxWidth())
+        if (error != null) {
+            Text(
+                text = error.message ?: "Не получилось оформить заказ, попробуйте ещё раз",
+                style = UggTheme.typography.caption,
+                color = UggTheme.colors.error,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        UggButton(
+            text = if (isCheckingOut) "Оформляем…" else "Оформить заказ",
+            onClick = onCheckout,
+            enabled = !isCheckingOut,
+            showArrow = !isCheckingOut,
+            modifier = Modifier.fillMaxWidth(),
+        )
         Text(
             text = "Оплата онлайн или при получении в мастерской",
             style = UggTheme.typography.caption,

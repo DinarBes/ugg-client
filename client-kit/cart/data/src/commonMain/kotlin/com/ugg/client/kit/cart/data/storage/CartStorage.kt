@@ -1,5 +1,7 @@
 package com.ugg.client.kit.cart.data.storage
 
+import com.ugg.client.kit.cart.domain.entities.CartProductOptions
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -32,6 +34,7 @@ data class CartSnapshot(
         val quantity: Int,
         val isExtra: Boolean,
         val color: Long? = null,
+        val options: CartProductOptions? = null,
     )
 
     companion object {

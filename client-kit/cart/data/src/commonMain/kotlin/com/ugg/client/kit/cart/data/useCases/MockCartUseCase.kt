@@ -7,10 +7,16 @@ import com.ugg.client.kit.cart.data.storage.CartStorage
 import com.ugg.client.kit.cart.domain.entities.Cart
 import com.ugg.client.kit.cart.domain.entities.CartProduct
 import com.ugg.client.kit.cart.domain.useCases.CartUseCase
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private const val MAX_QUANTITY = 9
+
+private val CHECKOUT_DELAY = 600.milliseconds
+
+private var mockNumber = 9001L
 
 /** Device-only cart on top of [CartStorage]; no backend yet. */
 class MockCartUseCase(
@@ -29,6 +35,7 @@ class MockCartUseCase(
                 quantity = 1,
                 isExtra = false,
                 color = product.color,
+                options = product.options,
             ),
         )
     }
@@ -57,6 +64,13 @@ class MockCartUseCase(
     }
 
     override suspend fun setGiftWrap(enabled: Boolean) = storage.update { it.copy(isGiftWrapped = enabled) }
+
+    /** Nothing leaves the device: the cart empties and a made-up number comes back. */
+    override suspend fun checkout(): Long {
+        delay(CHECKOUT_DELAY)
+        storage.update { CartSnapshot() }
+        return mockNumber++
+    }
 
     private fun CartSnapshot.add(line: CartSnapshot.Line): CartSnapshot {
         val existing = lines.firstOrNull { it.id == line.id }

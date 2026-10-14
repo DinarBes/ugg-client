@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.ugg.client.kit.cart.domain.entities.CartProduct
+import com.ugg.client.kit.cart.domain.entities.CartProductOptions
 import com.ugg.client.kit.cart.domain.useCases.CartUseCase
 import com.ugg.client.kit.product.domain.entities.Product
 import com.ugg.client.kit.product.domain.states.ProductState
@@ -98,6 +99,13 @@ class ProductViewModel(
                 details = listOfNotNull(shade?.name, selection.size, height?.name).joinToString(" · "),
                 unitPrice = product.priceValue,
                 color = shade?.color,
+                options = CartProductOptions(
+                    productId = product.id,
+                    shadeId = selection.shadeId,
+                    shadeName = shade?.name,
+                    heightId = selection.heightId,
+                    size = selection.size,
+                ),
             ),
         )
 

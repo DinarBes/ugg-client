@@ -21,4 +21,12 @@ interface CartUseCase {
     suspend fun selectDelivery(id: String)
 
     suspend fun setGiftWrap(enabled: Boolean)
+
+    /**
+     * Places the cart as an order and empties the cart. Returns the order number («1024»).
+     *
+     * @throws com.ugg.client.kit.cart.domain.exceptions.SignInRequiredException for a guest:
+     *   the phone number is what the workshop calls back.
+     */
+    suspend fun checkout(): Long
 }
