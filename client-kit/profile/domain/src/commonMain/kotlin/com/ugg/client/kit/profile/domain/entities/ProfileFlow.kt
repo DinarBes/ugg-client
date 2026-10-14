@@ -9,6 +9,18 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 @Serializable
 @JsonClassDiscriminator("destination")
 sealed class ProfileFlow : Destination() {
+    /** «Настройки»: name, account, app version. */
+    @Serializable
+    data object Settings : ProfileFlow() {
+        override val isTabViewVisible = false
+    }
+
+    /** Changing the name, opened from the settings. */
+    @Serializable
+    data object Name : ProfileFlow() {
+        override val isTabViewVisible = false
+    }
+
     /** «Мой размер»: size, shaft height and the measured foot. */
     @Serializable
     data object Size : ProfileFlow() {

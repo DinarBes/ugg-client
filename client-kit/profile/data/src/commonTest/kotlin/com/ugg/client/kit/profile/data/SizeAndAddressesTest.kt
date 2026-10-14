@@ -135,6 +135,7 @@ class SizeAndAddressesTest {
         override suspend fun sendCode(phone: String): PhoneVerification = error("not used")
         override suspend fun verify(verificationId: String, code: String): AuthUser = error("not used")
         override suspend fun signOut() = user.update { null }
+        override suspend fun deleteAccount() = Unit
     }
 
     private class FakeUsers(existing: Map<String, UserDto> = emptyMap()) : UserService {
@@ -152,6 +153,7 @@ class SizeAndAddressesTest {
             return id
         }
         override suspend fun deleteAddress(uid: String, addressId: String) = addresses.update { it - addressId }
+        override suspend fun deleteUser(uid: String) = Unit
     }
 
     private class FakeCatalog : CatalogService {

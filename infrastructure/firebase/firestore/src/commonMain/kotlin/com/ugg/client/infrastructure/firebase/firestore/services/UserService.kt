@@ -33,6 +33,9 @@ interface UserService {
     suspend fun saveAddress(uid: String, address: AddressDto): String
 
     suspend fun deleteAddress(uid: String, addressId: String)
+
+    /** Removes the profile and its addresses. Orders stay: they are the workshop's records. */
+    suspend fun deleteUser(uid: String)
 }
 
 internal class FirestoreUserService(
@@ -63,6 +66,12 @@ internal class FirestoreUserService(
 
     override suspend fun deleteAddress(uid: String, addressId: String) =
         store.delete("${addressesPath(uid)}/$addressId")
+
+    override suspend fun deleteUser(uid: String) {
+        // Firestore does not delete subcollections with their parent document.
+        store.query(RawQuery(collection = addressesPath(uid))).forEach { store.delete("${addressesPath(uid)}/${it.id}") }
+        store.delete(userPath(uid))
+    }
 
     private fun userPath(uid: String) = "users/$uid"
     private fun addressesPath(uid: String) = "users/$uid/addresses"

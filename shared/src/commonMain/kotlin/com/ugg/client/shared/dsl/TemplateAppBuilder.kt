@@ -6,6 +6,7 @@ import com.ugg.client.infrastructure.keystore.foundation.external.Keystore
 import com.ugg.client.infrastructure.keystore.foundation.external.KeystoreConfiguration
 import com.ugg.client.infrastructure.keystore.foundation.external.TemplateKeystore
 import com.ugg.client.kit.core.domain.AppEnvironment
+import com.ugg.client.kit.core.domain.AppInfo
 import io.ktor.client.plugins.logging.LogLevel
 
 class TemplateAppBuilder {
@@ -15,6 +16,9 @@ class TemplateAppBuilder {
     }
 
     var environment = AppEnvironment.PRODUCTION
+
+    /** Version of the platform app (Android `BuildConfig`, iOS bundle), for the settings screen. */
+    var appInfo = AppInfo()
 
     /**
      * The secure store backing the session tokens.

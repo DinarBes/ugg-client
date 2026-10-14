@@ -20,4 +20,6 @@ internal class UnavailablePhoneAuthService : PhoneAuthService {
         throw PhoneAuthException(PhoneAuthException.Reason.Unavailable)
 
     override suspend fun signOut() = Unit
+
+    override suspend fun deleteAccount() = Unit
 }

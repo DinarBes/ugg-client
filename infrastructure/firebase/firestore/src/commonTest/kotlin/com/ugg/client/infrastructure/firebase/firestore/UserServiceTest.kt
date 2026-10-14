@@ -42,3 +42,22 @@ class UserServiceTest {
         assertEquals(emptyList(), service.observeAddresses("u").first())
     }
 }
+
+class UserDeletionTest {
+    @Test
+    fun deletingTheUserRemovesTheProfileAndAddressesButNotOtherUsers() = kotlinx.coroutines.test.runTest {
+        val store = FakeDocumentStore(
+            mapOf(
+                "users/u" to mapOf("name" to "Анна"),
+                "users/u/addresses/a1" to mapOf("city" to "Иркутск"),
+                "users/u/addresses/a2" to mapOf("city" to "Листвянка"),
+                "users/other" to mapOf("name" to "Олег"),
+                "orders/o1" to mapOf("userId" to "u"),
+            ),
+        )
+
+        FirestoreUserService(store).deleteUser("u")
+
+        assertEquals(setOf("users/other", "orders/o1"), store.documents.value.keys)
+    }
+}

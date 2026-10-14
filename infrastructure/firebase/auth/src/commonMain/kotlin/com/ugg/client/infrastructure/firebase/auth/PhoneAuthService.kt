@@ -21,6 +21,12 @@ interface PhoneAuthService {
     suspend fun verify(verificationId: String, code: String): AuthUser
 
     suspend fun signOut()
+
+    /**
+     * Deletes the Firebase account of the signed-in user, which also signs them out.
+     * @throws PhoneAuthException with `RecentLoginRequired` when the last sign-in is too old.
+     */
+    suspend fun deleteAccount()
 }
 
 /** Platform implementation: Firebase on Android, a stub on iOS until the iOS app wires Firebase. */

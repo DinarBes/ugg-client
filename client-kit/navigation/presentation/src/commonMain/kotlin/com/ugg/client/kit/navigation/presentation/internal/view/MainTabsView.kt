@@ -36,6 +36,7 @@ internal fun MainTabsView(
     onSignIn: () -> Unit,
     onOpenSize: () -> Unit,
     onOpenAddresses: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     val tabs = MainTab.entries
 
@@ -70,6 +71,7 @@ internal fun MainTabsView(
                 contentPadding = padding,
                 onSignIn = onSignIn,
                 onOpenSize = onOpenSize,
+                onOpenSettings = onOpenSettings,
                 onMenuItem = { kind ->
                     when (kind) {
                         ProfileMenuItem.Kind.Addresses -> onOpenAddresses()

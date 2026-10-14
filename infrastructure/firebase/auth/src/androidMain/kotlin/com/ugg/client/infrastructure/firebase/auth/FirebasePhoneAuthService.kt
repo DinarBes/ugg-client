@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
@@ -87,6 +88,11 @@ internal class FirebasePhoneAuthService(
     }
 
     override suspend fun signOut() = auth.signOut()
+
+    override suspend fun deleteAccount() {
+        val user = auth.currentUser ?: return
+        user.delete().await()
+    }
 }
 
 private fun FirebaseUser.toAuthUser() = AuthUser(uid = uid, phone = phoneNumber)
@@ -102,6 +108,7 @@ private fun Throwable?.toPhoneAuthException(): PhoneAuthException {
     val reason = when (this) {
         is FirebaseTooManyRequestsException -> PhoneAuthException.Reason.TooManyRequests
         is FirebaseNetworkException -> PhoneAuthException.Reason.Network
+        is FirebaseAuthRecentLoginRequiredException -> PhoneAuthException.Reason.RecentLoginRequired
         is FirebaseAuthException -> when (errorCode) {
             "ERROR_INVALID_VERIFICATION_CODE" -> PhoneAuthException.Reason.InvalidCode
             "ERROR_INVALID_PHONE_NUMBER" -> PhoneAuthException.Reason.InvalidPhone

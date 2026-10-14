@@ -8,6 +8,7 @@ import com.ugg.client.kit.auth.presentation.external.authModule
 import com.ugg.client.kit.cart.presentation.external.cartModule
 import com.ugg.client.kit.core.data.coreDataModule
 import com.ugg.client.kit.core.domain.AppEnvironment
+import com.ugg.client.kit.core.domain.AppInfo
 import com.ugg.client.kit.core.domain.resolve
 import com.ugg.client.kit.home.presentation.external.homeModule
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
@@ -36,6 +37,7 @@ class TemplateApp(block: TemplateAppBuilder.() -> Unit = {}) {
         di = DI {
             bind<TemplateCore>() with instance(builder.core)
             bind<AppEnvironment>() with instance(builder.environment)
+            bind<AppInfo>() with instance(builder.appInfo)
             bind<Keystore>() with instance(builder.keystore)
 
             bind<AccessService>() with singleton { AccessService(instance()) }

@@ -14,6 +14,8 @@ class PhoneAuthException(
         /** Firebase throttled this device or number. */
         TooManyRequests,
         Network,
+        /** Deleting the account needs a fresh sign-in: sign out, sign in again, retry. */
+        RecentLoginRequired,
         /** Phone sign-in is not available on this platform or in this process (no Activity yet). */
         Unavailable,
         Unknown,

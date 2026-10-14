@@ -18,6 +18,7 @@ internal fun PhoneAuthException.toDomain(): Exception = when (reason) {
     PhoneAuthException.Reason.TooManyRequests -> TooManyAttemptsException()
     PhoneAuthException.Reason.Unavailable -> SignInUnavailableException()
     PhoneAuthException.Reason.Network -> Exception("Нет соединения с интернетом", this)
+    PhoneAuthException.Reason.RecentLoginRequired -> Exception("Войдите заново и повторите", this)
     PhoneAuthException.Reason.Unknown -> Exception("Не получилось войти. Попробуйте ещё раз", this)
 }
 

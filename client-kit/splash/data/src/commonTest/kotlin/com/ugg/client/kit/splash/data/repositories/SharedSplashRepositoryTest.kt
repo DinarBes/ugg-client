@@ -55,6 +55,7 @@ class SharedSplashRepositoryTest {
         override suspend fun sendCode(phone: String): PhoneVerification = error("not used")
         override suspend fun verify(verificationId: String, code: String): AuthUser = error("not used")
         override suspend fun signOut() = user.update { null }
+        override suspend fun deleteAccount() = Unit
     }
 
     private class FakeUsers(
@@ -68,6 +69,7 @@ class SharedSplashRepositoryTest {
         override fun observeAddresses(uid: String): Flow<List<AddressDto>> = flowOf(emptyList())
         override suspend fun saveAddress(uid: String, address: AddressDto) = ""
         override suspend fun deleteAddress(uid: String, addressId: String) = Unit
+        override suspend fun deleteUser(uid: String) = Unit
     }
 
     private suspend fun repositoryFor(

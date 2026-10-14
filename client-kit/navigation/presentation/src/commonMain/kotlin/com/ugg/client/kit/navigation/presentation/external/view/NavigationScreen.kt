@@ -28,6 +28,8 @@ import com.ugg.client.kit.onboarding.presentation.external.view.OnboardingScreen
 import com.ugg.client.kit.profile.domain.entities.ProfileFlow
 import com.ugg.client.kit.profile.presentation.external.view.AddressFormScreen
 import com.ugg.client.kit.profile.presentation.external.view.AddressesScreen
+import com.ugg.client.kit.profile.presentation.external.view.NameScreen
+import com.ugg.client.kit.profile.presentation.external.view.SettingsScreen
 import com.ugg.client.kit.profile.presentation.external.view.SizeScreen
 import com.ugg.client.kit.splash.domain.entities.SplashDestination
 import com.ugg.client.kit.splash.domain.entities.SplashFlow
@@ -65,6 +67,8 @@ fun NavigationScreen() {
                 subclass(StoryFlow.Story::class, StoryFlow.Story.serializer())
                 subclass(CareFlow.Care::class, CareFlow.Care.serializer())
                 subclass(CartFlow.Cart::class, CartFlow.Cart.serializer())
+                subclass(ProfileFlow.Settings::class, ProfileFlow.Settings.serializer())
+                subclass(ProfileFlow.Name::class, ProfileFlow.Name.serializer())
                 subclass(ProfileFlow.Size::class, ProfileFlow.Size.serializer())
                 subclass(ProfileFlow.Addresses::class, ProfileFlow.Addresses.serializer())
                 subclass(ProfileFlow.AddressForm::class, ProfileFlow.AddressForm.serializer())
@@ -118,6 +122,7 @@ fun NavigationScreen() {
                     onSignIn = { navigationContext.tryNavigate(SplashFlow.Auth) },
                     onOpenSize = { navigationContext.tryNavigate(ProfileFlow.Size) },
                     onOpenAddresses = { navigationContext.tryNavigate(ProfileFlow.Addresses) },
+                    onOpenSettings = { navigationContext.tryNavigate(ProfileFlow.Settings) },
                 )
             }
             entry<StoryFlow.Story> {
@@ -148,6 +153,12 @@ fun NavigationScreen() {
             entry<SplashFlow.Registration> {
                 // Pushed over Launch by the splash after the first sign-in; closing it pops back.
                 RegistrationScreen()
+            }
+            entry<ProfileFlow.Settings> {
+                SettingsScreen(onBack = { navigationContext.back() })
+            }
+            entry<ProfileFlow.Name> {
+                NameScreen(onBack = { navigationContext.back() })
             }
             entry<ProfileFlow.Size> {
                 SizeScreen(onBack = { navigationContext.back() })
