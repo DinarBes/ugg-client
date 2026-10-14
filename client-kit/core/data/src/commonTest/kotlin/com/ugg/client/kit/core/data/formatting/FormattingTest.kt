@@ -72,3 +72,18 @@ class FormattingTest {
         val HOURS = StoreDto.HoursDto("10:00", "20:00")
     }
 }
+
+class PhoneAndDateTest {
+    @Test
+    fun russianPhoneIsGrouped() {
+        assertEquals("+7 900 123-45-67", "+79001234567".formatPhone())
+        assertEquals("+7 900 123-45-67", "89001234567".formatPhone())
+        assertEquals("+1 650 555", "+1 650 555".formatPhone())
+    }
+
+    @Test
+    fun dateIsDayAndGenitiveMonth() {
+        // 2026-10-18 00:30 in Irkutsk.
+        assertEquals("18 октября", Instant.parse("2026-10-17T16:30:00Z").toEpochMilliseconds().toDayAndMonth())
+    }
+}

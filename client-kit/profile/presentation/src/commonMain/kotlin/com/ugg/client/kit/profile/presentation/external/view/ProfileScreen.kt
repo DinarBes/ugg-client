@@ -10,12 +10,13 @@ import com.ugg.client.kit.profile.presentation.internal.view.ProfileView
 import org.kodein.di.compose.viewmodel.rememberViewModel
 
 /**
- * Profile tab. A static frame for now: the data is a stub and the actions lead nowhere until
- * accounts and orders come from the backend.
+ * Profile tab. A guest sees an offer to sign in; a signed-in user sees the profile and the order
+ * in progress. «Выйти» is handled here; the other rows and cards are the host's decision.
  */
 @Composable
 fun ProfileScreen(
     contentPadding: PaddingValues,
+    onSignIn: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
     onOpenOrder: () -> Unit = {},
     onOpenSize: () -> Unit = {},
@@ -27,14 +28,18 @@ fun ProfileScreen(
 
     ProfileView(
         profile = state.profile,
+        isGuest = state.isGuest,
         isLoading = state.isLoading,
         error = state.error,
         contentPadding = contentPadding,
-        onRetry = { viewModel.fetch() },
+        onRetry = { viewModel.observe() },
+        onSignIn = onSignIn,
         onOpenSettings = onOpenSettings,
         onOpenOrder = onOpenOrder,
         onOpenSize = onOpenSize,
         onOpenOrders = onOpenOrders,
-        onMenuItem = onMenuItem,
+        onMenuItem = { kind ->
+            if (kind == ProfileMenuItem.Kind.Logout) viewModel.signOut() else onMenuItem(kind)
+        },
     )
 }

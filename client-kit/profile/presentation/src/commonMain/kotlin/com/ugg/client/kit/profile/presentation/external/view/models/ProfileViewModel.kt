@@ -7,6 +7,7 @@ import com.ugg.client.kit.profile.domain.entities.Profile
 import com.ugg.client.kit.profile.domain.states.ProfileState
 import com.ugg.client.kit.profile.domain.useCases.ProfileUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -27,21 +28,29 @@ class ProfileViewModel(
         state.update { it.copy(error = throwable, isLoading = false) }
     }
 
+    private var observing: Job? = null
+
     init {
-        fetch()
+        observe()
     }
 
-    fun fetch() = viewModelScope.launch(unexpectedExceptionHandler) {
-        state.update { it.copy(isLoading = true, error = null) }
+    /** (Re)subscribes to the profile; «Повторить» after an error lands here. */
+    fun observe() {
+        observing?.cancel()
+        observing = viewModelScope.launch(unexpectedExceptionHandler) {
+            state.update { it.copy(isLoading = true, error = null) }
 
-        try {
-            show(useCase.fetch())
-        } finally {
-            state.update { it.copy(isLoading = false) }
+            useCase.observeProfile().collect(::show)
         }
     }
 
-    private fun show(profile: Profile) = state.update { it.copy(profile = profile) }
+    fun signOut() = viewModelScope.launch(unexpectedExceptionHandler) {
+        useCase.signOut()
+    }
+
+    private fun show(profile: Profile?) = state.update {
+        it.copy(profile = profile, isGuest = profile == null, isLoading = false, error = null)
+    }
 }
 
 @Suppress("unused")

@@ -4,6 +4,10 @@ import com.ugg.client.kit.profile.domain.entities.Profile
 import com.ugg.client.kit.profile.domain.useCases.ProfileUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -15,6 +19,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProfileViewModelTest {
@@ -24,28 +29,51 @@ class ProfileViewModelTest {
     @AfterTest  fun tearDown() { Dispatchers.resetMain() }
 
     @Test
-    fun fetchShowsProfile() = runTest {
-        val vm = ProfileViewModel(SuccessUseCase())
+    fun showsProfileOfSignedInUser() = runTest {
+        val vm = ProfileViewModel(FakeUseCase(Profile(name = "Анна")))
         advanceUntilIdle()
 
         assertEquals("Анна", vm.state.value.profile?.name)
+        assertFalse(vm.state.value.isGuest)
         assertFalse(vm.state.value.isLoading)
     }
 
     @Test
-    fun fetchSetsErrorOnFailure() = runTest {
-        val vm = ProfileViewModel(FailureUseCase())
+    fun signingOutShowsGuest() = runTest {
+        val vm = ProfileViewModel(FakeUseCase(Profile(name = "Анна")))
+        advanceUntilIdle()
+
+        vm.signOut()
         advanceUntilIdle()
 
         assertNull(vm.state.value.profile)
+        assertTrue(vm.state.value.isGuest)
+    }
+
+    @Test
+    fun errorIsShownAndRetrySubscribesAgain() = runTest {
+        var fail = true
+        val useCase = object : ProfileUseCase {
+            override fun observeProfile(): Flow<Profile?> = flow {
+                if (fail) throw Exception("stub error") else emit(Profile(name = "Анна"))
+            }
+            override suspend fun signOut() = Unit
+        }
+        val vm = ProfileViewModel(useCase)
+        advanceUntilIdle()
         assertEquals("stub error", vm.state.value.error?.message)
+
+        fail = false
+        vm.observe()
+        advanceUntilIdle()
+
+        assertNull(vm.state.value.error)
+        assertEquals("Анна", vm.state.value.profile?.name)
     }
 
-    private class SuccessUseCase : ProfileUseCase {
-        override suspend fun fetch() = Profile(name = "Анна")
-    }
-
-    private class FailureUseCase : ProfileUseCase {
-        override suspend fun fetch(): Profile = throw Exception("stub error")
+    private class FakeUseCase(profile: Profile?) : ProfileUseCase {
+        private val profile = MutableStateFlow(profile)
+        override fun observeProfile(): Flow<Profile?> = profile
+        override suspend fun signOut() = profile.update { null }
     }
 }

@@ -11,6 +11,9 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.clientKit.profileDomain)
             implementation(projects.clientKit.coreDomain)
+            implementation(projects.clientKit.coreData)
+
+            implementation(projects.infrastructure.firebaseAuth)
         }
     }
 }

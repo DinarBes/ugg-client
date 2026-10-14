@@ -100,6 +100,9 @@ fun NavigationScreen() {
                     onSelect = { selectedTab = it },
                     onOpenStory = { navigationContext.tryNavigate(StoryFlow.Story) },
                     onOpenCart = { navigationContext.tryNavigate(CartFlow.Cart) },
+                    // After the code is confirmed the splash brings the app back to Launch; the
+                    // selected tab is kept, so the user lands on the profile, now signed in.
+                    onSignIn = { navigationContext.tryNavigate(SplashFlow.Auth) },
                 )
             }
             entry<StoryFlow.Story> {

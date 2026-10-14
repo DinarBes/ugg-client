@@ -35,10 +35,12 @@ import com.ugg.client.kit.profile.domain.entities.ProfileMenuItem
 @Composable
 internal fun ProfileView(
     profile: Profile?,
+    isGuest: Boolean,
     isLoading: Boolean,
     error: Throwable?,
     contentPadding: PaddingValues,
     onRetry: () -> Unit,
+    onSignIn: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenOrder: () -> Unit,
     onOpenSize: () -> Unit,
@@ -98,6 +100,26 @@ internal fun ProfileView(
             }
         }
 
+        isGuest -> LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = contentPadding,
+        ) {
+            item(key = "header") { Header(onOpenSettings = onOpenSettings) }
+            item(key = "guest") {
+                GuestCard(
+                    onSignIn = onSignIn,
+                    modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
+                )
+            }
+            item(key = "menu") {
+                Menu(
+                    items = GUEST_MENU,
+                    onClick = onMenuItem,
+                    modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
+                )
+            }
+        }
+
         error != null -> Column(
             modifier = Modifier.fillMaxSize().padding(contentPadding).padding(horizontal = horizontal),
             verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m, Alignment.CenterVertically),
@@ -148,7 +170,11 @@ private fun UserRow(profile: Profile) {
                 .background(colors.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text = profile.initials, style = UggTheme.typography.heading, color = colors.accentStrong)
+            if (profile.initials.isNotEmpty()) {
+                Text(text = profile.initials, style = UggTheme.typography.heading, color = colors.accentStrong)
+            } else {
+                Icon(imageVector = UggIcons.User, contentDescription = null, tint = colors.accentStrong, modifier = Modifier.size(24.dp))
+            }
         }
         Column {
             Text(text = profile.name, style = UggTheme.typography.heading, color = colors.content)
@@ -156,6 +182,44 @@ private fun UserRow(profile: Profile) {
         }
     }
 }
+
+/** What a guest is offered instead of the profile. */
+@Composable
+private fun GuestCard(onSignIn: () -> Unit, modifier: Modifier = Modifier) {
+    val colors = UggTheme.colors
+    val shape = UggTheme.shapes.large
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(colors.surface)
+            .padding(UggTheme.spacing.l),
+        verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.s),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(UggTheme.shapes.pill)
+                .background(colors.surfaceVariant),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(imageVector = UggIcons.User, contentDescription = null, tint = colors.accentStrong, modifier = Modifier.size(24.dp))
+        }
+        Text(text = "Войдите по номеру телефона", style = UggTheme.typography.heading, color = colors.content)
+        Text(
+            text = "Чтобы следить за пошивом своей пары, хранить размер и адреса доставки.",
+            style = UggTheme.typography.body,
+            color = colors.contentSecondary,
+        )
+        UggButton(text = "Войти", onClick = onSignIn, modifier = Modifier.fillMaxWidth())
+    }
+}
+
+private val GUEST_MENU = listOf(
+    ProfileMenuItem(ProfileMenuItem.Kind.Care, "Уход за уггами"),
+    ProfileMenuItem(ProfileMenuItem.Kind.Contact, "Написать в мастерскую"),
+)
 
 @Composable
 private fun QuickCard(

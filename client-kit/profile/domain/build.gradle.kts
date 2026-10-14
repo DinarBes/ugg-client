@@ -6,4 +6,11 @@ kotlin {
     android {
         namespace = "com.ugg.client.kit.profile.domain"
     }
+
+    sourceSets {
+        commonMain.dependencies {
+            // api: ProfileUseCase exposes a Flow.
+            api(libs.kotlinx.coroutines.core)
+        }
+    }
 }

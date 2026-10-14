@@ -26,3 +26,11 @@ fun Int.plural(one: String, few: String, many: String): String {
         else -> many
     }
 }
+
+/** `+79001234567` → «+7 900 123-45-67»; other formats are shown as they are. */
+fun String.formatPhone(): String {
+    val digits = filter { it.isDigit() }
+    if (digits.length != 11 || !(digits.startsWith("7") || digits.startsWith("8"))) return this
+    val n = digits.drop(1)
+    return "+7 ${n.substring(0, 3)} ${n.substring(3, 6)}-${n.substring(6, 8)}-${n.substring(8, 10)}"
+}
