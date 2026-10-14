@@ -3,6 +3,7 @@
 package com.ugg.client.kit.stores.data
 
 import com.ugg.client.infrastructure.firebase.firestore.FirestoreException
+import com.ugg.client.infrastructure.firebase.firestore.dto.CareContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.CheckoutContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.GeoPointDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.HomeContentDto
@@ -69,5 +70,6 @@ class SharedStoresUseCaseTest {
         override suspend fun story() = StoryContentDto()
         override suspend fun onboarding() = OnboardingContentDto()
         override suspend fun checkout() = CheckoutContentDto()
+        override suspend fun care() = CareContentDto()
     }
 }

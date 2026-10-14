@@ -1,6 +1,7 @@
 package com.ugg.client.kit.product.data
 
 import com.ugg.client.infrastructure.firebase.firestore.FirestoreException
+import com.ugg.client.infrastructure.firebase.firestore.dto.CareContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.CheckoutContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.HomeContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.OnboardingContentDto
@@ -52,6 +53,7 @@ class SharedProductUseCaseTest {
         override suspend fun story() = StoryContentDto()
         override suspend fun onboarding() = OnboardingContentDto()
         override suspend fun checkout() = CheckoutContentDto()
+        override suspend fun care() = CareContentDto()
     }
 
     private companion object {

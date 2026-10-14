@@ -16,6 +16,7 @@ import com.ugg.client.kit.onboarding.presentation.external.onboardingModule
 import com.ugg.client.kit.product.presentation.external.productModule
 import com.ugg.client.kit.profile.presentation.external.profileModule
 import com.ugg.client.kit.stores.presentation.external.storesModule
+import com.ugg.client.kit.care.presentation.external.careModule
 import com.ugg.client.kit.story.presentation.external.storyModule
 import com.ugg.client.kit.splash.presentation.external.splashModule
 import com.ugg.client.shared.dsl.TemplateAppBuilder
@@ -79,6 +80,7 @@ class TemplateApp(block: TemplateAppBuilder.() -> Unit = {}) {
             import(homeModule)
             import(productModule)
             import(storyModule)
+            import(careModule)
             import(storesModule)
             import(cartModule)
             import(profileModule)

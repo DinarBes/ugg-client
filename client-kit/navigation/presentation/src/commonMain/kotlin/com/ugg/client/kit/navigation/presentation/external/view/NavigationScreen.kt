@@ -16,6 +16,8 @@ import com.ugg.client.kit.auth.domain.entities.AuthFlow
 import com.ugg.client.kit.auth.presentation.external.view.InitiateScreen
 import com.ugg.client.kit.auth.presentation.external.view.OtpScreen
 import com.ugg.client.kit.auth.presentation.external.view.RegistrationScreen
+import com.ugg.client.kit.care.domain.entities.CareFlow
+import com.ugg.client.kit.care.presentation.external.view.CareScreen
 import com.ugg.client.kit.cart.domain.entities.CartFlow
 import com.ugg.client.kit.cart.presentation.external.view.CartScreen
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
@@ -61,6 +63,7 @@ fun NavigationScreen() {
                 subclass(SplashFlow.Registration::class, SplashFlow.Registration.serializer())
                 subclass(AuthFlow.Otp::class, AuthFlow.Otp.serializer())
                 subclass(StoryFlow.Story::class, StoryFlow.Story.serializer())
+                subclass(CareFlow.Care::class, CareFlow.Care.serializer())
                 subclass(CartFlow.Cart::class, CartFlow.Cart.serializer())
                 subclass(ProfileFlow.Size::class, ProfileFlow.Size.serializer())
                 subclass(ProfileFlow.Addresses::class, ProfileFlow.Addresses.serializer())
@@ -108,6 +111,7 @@ fun NavigationScreen() {
                     selected = selectedTab,
                     onSelect = { selectedTab = it },
                     onOpenStory = { navigationContext.tryNavigate(StoryFlow.Story) },
+                    onOpenCare = { navigationContext.tryNavigate(CareFlow.Care) },
                     onOpenCart = { navigationContext.tryNavigate(CartFlow.Cart) },
                     // After the code is confirmed the splash brings the app back to Launch; the
                     // selected tab is kept, so the user lands on the profile, now signed in.
@@ -124,6 +128,10 @@ fun NavigationScreen() {
                         navigationContext.back()
                     },
                 )
+            }
+            entry<CareFlow.Care> {
+                // TODO: «Написать в мастерскую» once the chat with the workshop exists.
+                CareScreen(onBack = { navigationContext.back() })
             }
             entry<CartFlow.Cart> {
                 CartScreen(

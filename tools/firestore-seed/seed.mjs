@@ -6,13 +6,24 @@
 //   3. npm run seed            (add --dry-run to only print what would be written)
 //
 // Every document listed in data.mjs is overwritten as a whole; nothing else is touched.
+// To write only some of them, so edits made in the console survive:
+//      npm run seed -- --only content/care,stores/irkutsk
 
 import { readFileSync, existsSync } from "node:fs";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore, GeoPoint } from "firebase-admin/firestore";
-import { documents } from "./data.mjs";
+import { documents as allDocuments } from "./data.mjs";
 
 const dryRun = process.argv.includes("--dry-run");
+const onlyIndex = process.argv.indexOf("--only");
+const only = onlyIndex >= 0 ? (process.argv[onlyIndex + 1] ?? "").split(",").filter(Boolean) : null;
+
+const unknown = (only ?? []).filter((path) => !(path in allDocuments));
+if (unknown.length > 0) {
+  console.error(`Таких документов нет в data.mjs: ${unknown.join(", ")}`);
+  process.exit(1);
+}
+const documents = only ? Object.fromEntries(only.map((path) => [path, allDocuments[path]])) : allDocuments;
 const keyPath = new URL("./service-account.json", import.meta.url);
 
 if (dryRun) {

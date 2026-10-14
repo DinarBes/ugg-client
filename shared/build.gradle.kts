@@ -49,6 +49,9 @@ kotlin {
         projects.clientKit.productDomain,
         projects.clientKit.productPresentation,
 
+        projects.clientKit.careData,
+        projects.clientKit.careDomain,
+        projects.clientKit.carePresentation,
         projects.clientKit.storyData,
         projects.clientKit.storyDomain,
         projects.clientKit.storyPresentation,

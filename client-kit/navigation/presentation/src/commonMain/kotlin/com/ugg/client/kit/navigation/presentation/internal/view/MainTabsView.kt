@@ -31,6 +31,7 @@ internal fun MainTabsView(
     selected: MainTab,
     onSelect: (MainTab) -> Unit,
     onOpenStory: () -> Unit,
+    onOpenCare: () -> Unit,
     onOpenCart: () -> Unit,
     onSignIn: () -> Unit,
     onOpenSize: () -> Unit,
@@ -54,6 +55,7 @@ internal fun MainTabsView(
                 onChooseModel = { onSelect(MainTab.Model) },
                 onOpenStores = { onSelect(MainTab.Stores) },
                 onOpenStory = onOpenStory,
+                onOpenCare = onOpenCare,
                 onOpenCart = onOpenCart,
             )
 
@@ -71,6 +73,7 @@ internal fun MainTabsView(
                 onMenuItem = { kind ->
                     when (kind) {
                         ProfileMenuItem.Kind.Addresses -> onOpenAddresses()
+                        ProfileMenuItem.Kind.Care -> onOpenCare()
                         else -> Unit
                     }
                 },

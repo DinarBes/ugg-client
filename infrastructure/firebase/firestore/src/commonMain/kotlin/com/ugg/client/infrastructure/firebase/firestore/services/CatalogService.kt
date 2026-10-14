@@ -1,6 +1,7 @@
 package com.ugg.client.infrastructure.firebase.firestore.services
 
 import com.ugg.client.infrastructure.firebase.firestore.FirestoreException
+import com.ugg.client.infrastructure.firebase.firestore.dto.CareContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.CheckoutContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.HomeContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.OnboardingContentDto
@@ -26,6 +27,7 @@ interface CatalogService {
     suspend fun story(): StoryContentDto
     suspend fun onboarding(): OnboardingContentDto
     suspend fun checkout(): CheckoutContentDto
+    suspend fun care(): CareContentDto
 
     companion object {
         /** The shop sells one model. */
@@ -47,6 +49,7 @@ internal class FirestoreCatalogService(
     override suspend fun story() = document("content/story", StoryContentDto.serializer())
     override suspend fun onboarding() = document("content/onboarding", OnboardingContentDto.serializer())
     override suspend fun checkout() = document("content/checkout", CheckoutContentDto.serializer())
+    override suspend fun care() = document("content/care", CareContentDto.serializer())
 
     private suspend fun <T> document(path: String, serializer: KSerializer<T>): T =
         (store.get(path) ?: throw FirestoreException(FirestoreException.Reason.NotFound))

@@ -79,3 +79,23 @@ data class CheckoutContentDto(
     @Serializable
     data class GiftWrapDto(val title: String = "", val description: String = "", val price: Int = 0)
 }
+
+/** `content/care`: «Уход за уггами». */
+@Serializable
+data class CareContentDto(
+    val kicker: String = "",
+    val title: String = "",
+    val intro: String = "",
+    val readMinutes: Int = 0,
+    val tips: List<TipDto> = emptyList(),
+    val dontsTitle: String = "",
+    val donts: List<String> = emptyList(),
+    val contact: ContactDto? = null,
+) {
+    /** [kind]: `snow`, `drying`, `salt`, `cleaning`, `protection`, `storage` — the app picks the icon. */
+    @Serializable
+    data class TipDto(val kind: String = "", val title: String = "", val body: String = "")
+
+    @Serializable
+    data class ContactDto(val title: String = "", val body: String = "", val button: String = "")
+}

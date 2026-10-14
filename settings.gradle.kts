@@ -53,6 +53,9 @@ listOf(
     Module(":client-kit:product-domain", "client-kit/product/domain"),
     Module(":client-kit:product-presentation", "client-kit/product/presentation"),
 
+    Module(":client-kit:care-data", "client-kit/care/data"),
+    Module(":client-kit:care-domain", "client-kit/care/domain"),
+    Module(":client-kit:care-presentation", "client-kit/care/presentation"),
     Module(":client-kit:story-data", "client-kit/story/data"),
     Module(":client-kit:story-domain", "client-kit/story/domain"),
     Module(":client-kit:story-presentation", "client-kit/story/presentation"),

@@ -4,6 +4,7 @@ import com.ugg.client.infrastructure.firebase.auth.AuthUser
 import com.ugg.client.infrastructure.firebase.auth.PhoneAuthService
 import com.ugg.client.infrastructure.firebase.auth.PhoneVerification
 import com.ugg.client.infrastructure.firebase.firestore.dto.AddressDto
+import com.ugg.client.infrastructure.firebase.firestore.dto.CareContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.CheckoutContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.HomeContentDto
 import com.ugg.client.infrastructure.firebase.firestore.dto.OnboardingContentDto
@@ -163,5 +164,6 @@ class SizeAndAddressesTest {
         override suspend fun story() = StoryContentDto()
         override suspend fun onboarding() = OnboardingContentDto()
         override suspend fun checkout() = CheckoutContentDto()
+        override suspend fun care() = CareContentDto()
     }
 }
