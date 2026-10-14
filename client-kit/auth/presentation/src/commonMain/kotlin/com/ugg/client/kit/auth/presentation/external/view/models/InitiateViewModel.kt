@@ -32,6 +32,12 @@ class InitiateViewModel(
 
     fun onStateChange(new: InitiateState) = state.update { new }
 
+    /**
+     * A clean phone step. ViewModels are shared per type and outlive the screen, so without this
+     * the number typed before signing out would still be in the field next time.
+     */
+    fun reset() = state.update { InitiateState() }
+
     fun onSubmit() = viewModelScope.launch(unexpectedExceptionHandler) {
         state.update { it.copy(isLoading = true, error = null) }
 

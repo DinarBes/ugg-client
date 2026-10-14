@@ -29,6 +29,9 @@ class OtpViewModel(
 
     fun onStateChange(new: OtpState) = state.update { new }
 
+    /** A clean code step for a new number: no digits, no error, no session of the previous attempt. */
+    fun reset() = state.update { OtpState() }
+
     fun onSubmit(sessionId: String) = viewModelScope.launch(unexpectedExceptionHandler) {
         state.update { it.copy(isLoading = true, error = null) }
 

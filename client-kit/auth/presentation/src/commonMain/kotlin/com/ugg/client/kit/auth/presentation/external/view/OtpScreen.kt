@@ -1,8 +1,12 @@
 package com.ugg.client.kit.auth.presentation.external.view
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.ugg.client.kit.auth.presentation.external.view.models.OtpViewModel
 import com.ugg.client.kit.auth.presentation.internal.view.OTP_LENGTH
 import com.ugg.client.kit.auth.presentation.internal.view.OtpView
@@ -22,6 +26,16 @@ fun OtpScreen(
 ) {
     val viewModel: OtpViewModel by rememberViewModel()
     val state by viewModel.state.collectAsState()
+
+    // A fresh form on every visit to this step, but not on rotation or on «back» from the next
+    // step: the flag lives as long as this back stack entry.
+    var isStarted by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (!isStarted) {
+            isStarted = true
+            viewModel.reset()
+        }
+    }
 
     OtpView(
         phone = phone,

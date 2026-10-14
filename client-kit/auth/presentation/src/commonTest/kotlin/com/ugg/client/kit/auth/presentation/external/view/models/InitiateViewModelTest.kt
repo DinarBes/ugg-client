@@ -82,6 +82,18 @@ class InitiateViewModelTest {
         assertNull(vm.state.value.error)
     }
 
+    @Test
+    fun resetForgetsThePreviousAttempt() = runTest {
+        val vm = InitiateViewModel(FailureUseCase(), NavigationContext())
+        vm.onStateChange(vm.state.value.copy(phone = "+79001234567"))
+        vm.onSubmit()
+        advanceUntilIdle()
+
+        vm.reset()
+
+        assertEquals(InitiateState(), vm.state.value)
+    }
+
     private class InstantUseCase : AuthUseCase {
         override suspend fun initiate(phone: String): PhoneChallenge = PhoneChallenge.SignedIn
         override suspend fun login(otp: String, sessionId: String) = Unit

@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "seed": "node seed.mjs"
+    "seed": "node seed.mjs",
+    "set-admin": "node set-admin.mjs"
   },
   "dependencies": {
     "firebase-admin": "^13.5.0"

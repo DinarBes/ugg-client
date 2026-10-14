@@ -5,17 +5,31 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
     function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
-    // Custom claim, set later with the Admin SDK for the workshop's account.
-    function isAdmin() { return signedIn() && request.auth.token.admin == true; }
+    // The workshop's accounts: `isAdmin: true` in their own users/{uid}, set in the console or
+    // with `npm run set-admin -- +79001234567`. Costs one document read per check.
+    function userDoc() { return /databases/$(database)/documents/users/$(request.auth.uid); }
+    function isAdmin() {
+      return signedIn() && exists(userDoc()) && get(userDoc()).data.get('isAdmin', false) == true;
+    }
 
-    // Catalog and screen texts: everyone reads, nobody writes from the app.
+    // Catalog and screen texts: everyone reads, only the admin app writes.
     match /products/{id} { allow read: if true; allow write: if isAdmin(); }
     match /stores/{id}   { allow read: if true; allow write: if isAdmin(); }
     match /content/{id}  { allow read: if true; allow write: if isAdmin(); }
 
+    // The admin app lists customers and shows their size next to the order.
+    // The owner edits their profile but never `isAdmin`: otherwise any customer could make
+    // themselves an admin. Only the console or the Admin SDK (which skip the rules) set it.
     match /users/{uid} {
-      allow read, write: if isOwner(uid);
-      match /addresses/{addressId} { allow read, write: if isOwner(uid); }
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid) && !('isAdmin' in request.resource.data);
+      allow update: if isOwner(uid)
+        && request.resource.data.get('isAdmin', false) == resource.data.get('isAdmin', false);
+      allow delete: if isOwner(uid);
+      match /addresses/{addressId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isOwner(uid);
+      }
     }
 
     // Order numbers: a signed-in user may only move the counter by one,
@@ -34,6 +48,12 @@ service cloud.firestore {
         && request.resource.data.number == get(/databases/$(database)/documents/counters/orders).data.next
         && getAfter(/databases/$(database)/documents/counters/orders).data.next == request.resource.data.number + 1;
       allow update, delete: if isAdmin();
+    }
+
+    // The master's notes on an order. Kept out of the order itself: the customer can read
+    // their order document, and these are for the workshop only.
+    match /orderNotes/{orderId} {
+      allow read, write: if isAdmin();
     }
   }
 }
