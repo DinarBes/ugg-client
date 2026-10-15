@@ -22,3 +22,5 @@ node_modules/
 
 # Firebase CLI cache (firebase deploy)
 .firebase/
+androidApp/release/
+androidApp/release/
