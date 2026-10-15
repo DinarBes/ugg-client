@@ -20,4 +20,8 @@ data class UggSpacing(
     val section: Dp = 28.dp,
     /** Height of primary buttons. */
     val buttonHeight: Dp = 56.dp,
+    /** Widest a single column of text and forms gets on a wide window. */
+    val readableWidth: Dp = 640.dp,
+    /** Widest a multi-column screen gets; beyond it the margins grow. */
+    val wideContentWidth: Dp = 1200.dp,
 )

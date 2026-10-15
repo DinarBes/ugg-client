@@ -61,11 +61,13 @@ internal fun ProductGallery(
     tint: Long?,
     onBack: (() -> Unit)?,
     onShare: () -> Unit,
+    /** A fixed-height band on a phone; the whole start pane on a wide window. */
+    modifier: Modifier = Modifier.fillMaxWidth().height(500.dp),
 ) {
     val colors = UggTheme.colors
     val buttonColor = colors.surfaceElevated.copy(alpha = 0.85f)
 
-    Box(modifier = Modifier.fillMaxWidth().height(500.dp)) {
+    Box(modifier = modifier) {
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) {
             UggPhotoPlaceholder(
                 modifier = Modifier.fillMaxSize(),

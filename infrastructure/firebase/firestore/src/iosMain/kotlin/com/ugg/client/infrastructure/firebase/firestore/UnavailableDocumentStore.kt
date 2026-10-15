@@ -20,7 +20,7 @@ internal class UnavailableDocumentStore : DocumentStore {
     override suspend fun set(path: String, data: Map<String, Any?>, merge: Boolean) = unavailable()
     override suspend fun delete(path: String) = unavailable()
     override fun newId(collection: String): String = unavailable()
-    override suspend fun <T> transaction(block: (StoreTransaction) -> T): T = unavailable()
+    override suspend fun <T> transaction(block: suspend (StoreTransaction) -> T): T = unavailable()
 
     private fun unavailable(): Nothing = throw FirestoreException(FirestoreException.Reason.Unavailable)
 }

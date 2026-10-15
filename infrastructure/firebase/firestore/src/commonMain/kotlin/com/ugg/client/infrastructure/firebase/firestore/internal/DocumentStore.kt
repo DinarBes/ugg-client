@@ -27,11 +27,12 @@ internal interface DocumentStore {
      * Runs [block] atomically; Firestore may run it several times when documents it read change
      * meanwhile, so it must not have side effects outside the [StoreTransaction].
      */
-    suspend fun <T> transaction(block: (StoreTransaction) -> T): T
+    suspend fun <T> transaction(block: suspend (StoreTransaction) -> T): T
 }
 
 internal interface StoreTransaction {
-    fun get(path: String): RawDocument?
+    /** Suspends on the web, where the JS SDK reads inside a transaction through a Promise. */
+    suspend fun get(path: String): RawDocument?
     fun set(path: String, data: Map<String, Any?>)
 }
 

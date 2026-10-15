@@ -11,6 +11,10 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.clientKit.coreData)
             implementation(projects.clientKit.coreDomain)
+
+            // api: UggTheme.adaptiveInfo exposes WindowAdaptiveInfo / WindowSizeClass to every screen.
+            api(libs.compose.material3.adaptive)
+            api(libs.androidx.window.core)
         }
     }
 }

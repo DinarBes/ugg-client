@@ -20,6 +20,8 @@ import com.ugg.client.kit.care.domain.entities.CareFlow
 import com.ugg.client.kit.care.presentation.external.view.CareScreen
 import com.ugg.client.kit.cart.domain.entities.CartFlow
 import com.ugg.client.kit.cart.presentation.external.view.CartScreen
+import com.ugg.client.kit.core.presentation.external.components.UggCenteredBox
+import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 import com.ugg.client.kit.navigation.domain.external.contexts.NavigationContext
 import com.ugg.client.kit.navigation.domain.external.entities.NavigationEvent
 import com.ugg.client.kit.navigation.presentation.internal.view.MainTab
@@ -95,20 +97,25 @@ fun NavigationScreen() {
         backStack = backStack,
         entryProvider = entryProvider {
             entry<SplashDestination.Splash> {
-                SplashScreen(error = splashState.error, onRetry = { splashViewModel.fetch() })
+                Readable {
+                    SplashScreen(error = splashState.error, onRetry = { splashViewModel.fetch() })
+                }
             }
             entry<SplashFlow.Onboarding> {
+                // Full-bleed background; the screen holds its own copy to a readable width.
                 OnboardingScreen(
                     onStart = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
                     onLogin = { navigationContext.tryNavigate(SplashFlow.Auth) { clear() } },
                 )
             }
             entry<SplashFlow.Auth> {
-                // Sign-in is optional: back and «Продолжить без входа» both land in the app as a guest.
-                InitiateScreen(
-                    onBack = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
-                    onSkip = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
-                )
+                Readable {
+                    // Sign-in is optional: back and «Продолжить без входа» both land in the app as a guest.
+                    InitiateScreen(
+                        onBack = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
+                        onSkip = { navigationContext.tryNavigate(SplashFlow.Launch) { clear() } },
+                    )
+                }
             }
             entry<SplashFlow.Launch> {
                 MainTabsView(
@@ -126,18 +133,23 @@ fun NavigationScreen() {
                 )
             }
             entry<StoryFlow.Story> {
-                StoryScreen(
-                    onBack = { navigationContext.back() },
-                    onChooseModel = {
-                        selectedTab = MainTab.Model
-                        navigationContext.back()
-                    },
-                )
+                Readable {
+                    StoryScreen(
+                        onBack = { navigationContext.back() },
+                        onChooseModel = {
+                            selectedTab = MainTab.Model
+                            navigationContext.back()
+                        },
+                    )
+                }
             }
             entry<CareFlow.Care> {
-                // TODO: «Написать в мастерскую» once the chat with the workshop exists.
-                CareScreen(onBack = { navigationContext.back() })
+                Readable {
+                    // TODO: «Написать в мастерскую» once the chat with the workshop exists.
+                    CareScreen(onBack = { navigationContext.back() })
+                }
             }
+            // The cart and the tabs lay themselves out for wide windows.
             entry<CartFlow.Cart> {
                 CartScreen(
                     onBack = { navigationContext.back() },
@@ -154,27 +166,51 @@ fun NavigationScreen() {
                 )
             }
             entry<SplashFlow.Registration> {
-                // Pushed over Launch by the splash after the first sign-in; closing it pops back.
-                RegistrationScreen()
+                Readable {
+                    // Pushed over Launch by the splash after the first sign-in; closing it pops back.
+                    RegistrationScreen()
+                }
             }
             entry<ProfileFlow.Settings> {
-                SettingsScreen(onBack = { navigationContext.back() })
+                Readable {
+                    SettingsScreen(onBack = { navigationContext.back() })
+                }
             }
             entry<ProfileFlow.Name> {
-                NameScreen(onBack = { navigationContext.back() })
+                Readable {
+                    NameScreen(onBack = { navigationContext.back() })
+                }
             }
             entry<ProfileFlow.Size> {
-                SizeScreen(onBack = { navigationContext.back() })
+                Readable {
+                    SizeScreen(onBack = { navigationContext.back() })
+                }
             }
             entry<ProfileFlow.Addresses> {
-                AddressesScreen(onBack = { navigationContext.back() })
+                Readable {
+                    AddressesScreen(onBack = { navigationContext.back() })
+                }
             }
             entry<ProfileFlow.AddressForm> {
-                AddressFormScreen(addressId = it.addressId, onBack = { navigationContext.back() })
+                Readable {
+                    AddressFormScreen(addressId = it.addressId, onBack = { navigationContext.back() })
+                }
             }
             entry<AuthFlow.Otp> {
-                OtpScreen(phone = it.phone, sessionId = it.sessionId, onBack = { navigationContext.back() })
+                Readable {
+                    OtpScreen(phone = it.phone, sessionId = it.sessionId, onBack = { navigationContext.back() })
+                }
             }
         }
     )
 }
+
+/**
+ * Single-column screens (forms, articles, sign-in) are held to a readable width on a wide
+ * window instead of stretching across it. Only for screens on the plain app background: the
+ * margins are painted in it. A screen with its own full-screen background (the onboarding)
+ * limits its content itself, so the background is never cut.
+ */
+@Composable
+private fun Readable(content: @Composable () -> Unit) =
+    UggCenteredBox(maxWidth = UggTheme.spacing.readableWidth, content = content)

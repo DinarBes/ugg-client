@@ -13,5 +13,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.security.crypto)
         }
+
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
+        }
     }
 }

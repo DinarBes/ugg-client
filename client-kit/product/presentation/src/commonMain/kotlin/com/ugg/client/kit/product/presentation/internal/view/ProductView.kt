@@ -5,6 +5,11 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import com.ugg.client.kit.core.presentation.external.components.UggPullToRefreshBox
 import androidx.compose.foundation.background
+import com.ugg.client.kit.core.presentation.external.components.UggCenteredBox
+import androidx.window.core.layout.WindowSizeClass
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -113,48 +118,98 @@ private fun ProductContent(
 ) {
     val pagerState = rememberPagerState { product.photoCount.coerceAtLeast(1) }
     val shade = product.shades.firstOrNull { it.id == selection.shadeId }
+    val isExpanded = UggTheme.adaptiveInfo.windowSizeClass
+        .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-    // The top inset is deliberately ignored: the gallery runs under the status bar.
-    Column(modifier = Modifier.fillMaxSize().padding(bottom = contentPadding.calculateBottomPadding())) {
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            item(key = "gallery") {
-                ProductGallery(
-                    pagerState = pagerState,
-                    tint = shade?.color,
-                    onBack = onBack,
-                    onShare = onShare,
-                )
-            }
-            item(key = "thumbnails") {
-                ProductThumbnails(photoCount = product.photoCount, pagerState = pagerState, tint = shade?.color)
-            }
-            item(key = "summary") { ProductSummary(product) }
-            item(key = "options") {
-                ProductOptions(
-                    product = product,
-                    selection = selection,
-                    onSelectShade = onSelectShade,
-                    onSelectHeight = onSelectHeight,
-                    onSelectSize = onSelectSize,
-                    onOpenSizeChart = onOpenSizeChart,
-                )
-            }
-            if (product.features.isNotEmpty()) {
-                item(key = "features") { ProductFeatures(product.features) }
-            }
-            if (product.details.isNotEmpty()) {
-                item(key = "details") {
-                    ProductDetails(details = product.details, expanded = expandedDetail, onToggle = onToggleDetail)
-                }
-            }
-        }
-
+    val bottomBar: @Composable () -> Unit = {
         ProductBottomBar(
             price = product.price,
             summary = selectionSummary(product, selection),
             isComplete = selection.isComplete,
             onAddToCart = onAddToCart,
         )
+    }
+    val description: LazyListScope.() -> Unit = {
+        item(key = "summary") { ProductSummary(product) }
+        item(key = "options") {
+            ProductOptions(
+                product = product,
+                selection = selection,
+                onSelectShade = onSelectShade,
+                onSelectHeight = onSelectHeight,
+                onSelectSize = onSelectSize,
+                onOpenSizeChart = onOpenSizeChart,
+            )
+        }
+        if (product.features.isNotEmpty()) {
+            item(key = "features") { ProductFeatures(product.features) }
+        }
+        if (product.details.isNotEmpty()) {
+            item(key = "details") {
+                ProductDetails(details = product.details, expanded = expandedDetail, onToggle = onToggleDetail)
+            }
+        }
+    }
+
+    if (isExpanded) {
+        // Wide window: the photos stay in view on the start pane while the options scroll on the
+        // end pane, with «В корзину» under them.
+        UggCenteredBox(
+            maxWidth = UggTheme.spacing.wideContentWidth,
+            modifier = Modifier.padding(contentPadding),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize().padding(UggTheme.spacing.xl),
+                horizontalArrangement = Arrangement.spacedBy(UggTheme.spacing.xl),
+            ) {
+                Column(
+                    modifier = Modifier.weight(1.1f).fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.s),
+                ) {
+                    ProductGallery(
+                        pagerState = pagerState,
+                        tint = shade?.color,
+                        onBack = onBack,
+                        onShare = onShare,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(UggTheme.shapes.extraLarge),
+                    )
+                    ProductThumbnails(photoCount = product.photoCount, pagerState = pagerState, tint = shade?.color)
+                }
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(UggTheme.shapes.extraLarge),
+                ) {
+                    LazyColumn(modifier = Modifier.weight(1f), content = description)
+                    bottomBar()
+                }
+            }
+        }
+    } else {
+        // The top inset is deliberately ignored: the gallery runs under the status bar.
+        Column(modifier = Modifier.fillMaxSize().padding(bottom = contentPadding.calculateBottomPadding())) {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                item(key = "gallery") {
+                    ProductGallery(
+                        pagerState = pagerState,
+                        tint = shade?.color,
+                        onBack = onBack,
+                        onShare = onShare,
+                    )
+                }
+                item(key = "thumbnails") {
+                    ProductThumbnails(photoCount = product.photoCount, pagerState = pagerState, tint = shade?.color)
+                }
+                description()
+            }
+
+            bottomBar()
+        }
     }
 }
 

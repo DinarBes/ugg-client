@@ -1,4 +1,5 @@
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 val libs = the<LibrariesForLibs>()
 
@@ -40,6 +41,15 @@ kotlin {
     }
 
     iosX64(); iosArm64(); iosSimulatorArm64()
+
+    // The web client (webApp). Tests run on the Android host and iOS; a browser test run would
+    // need a headless Chrome on every machine, so it is off here.
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser {
+            testTask { enabled = false }
+        }
+    }
 
     sourceSets {
         @Suppress("unused")

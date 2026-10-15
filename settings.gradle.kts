@@ -16,6 +16,7 @@ includeBuild("build-logic")
 
 include(":shared")
 include(":androidApp")
+include(":webApp")
 
 listOf(
     Module(":infrastructure:api-core", "infrastructure/api/core"),

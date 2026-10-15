@@ -1,7 +1,6 @@
 package com.ugg.client.infrastructure.api.core
 
 import com.ugg.client.infrastructure.api.core.ktor.ktorModule
-import com.ugg.client.infrastructure.api.core.multiplatform.multiplatformCoreModule
 import io.ktor.client.HttpClient
 import org.kodein.di.DI
 import org.kodein.di.LazyDelegate
@@ -17,7 +16,6 @@ class TemplateCore(block: TemplateCoreConfiguration.() -> Unit) {
 
         di = DI {
             bind<TemplateCoreConfiguration>() with instance(configuration)
-            import(multiplatformCoreModule)
             import(ktorModule)
         }
     }

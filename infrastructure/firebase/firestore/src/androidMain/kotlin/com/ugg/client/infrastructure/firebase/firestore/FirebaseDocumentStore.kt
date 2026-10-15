@@ -19,6 +19,7 @@ import com.ugg.client.infrastructure.firebase.firestore.internal.StoreTransactio
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -67,14 +68,18 @@ internal class FirebaseDocumentStore(
 
     override fun newId(collection: String): String = firestore.collection(collection).document().id
 
-    override suspend fun <T> transaction(block: (StoreTransaction) -> T): T =
+    override suspend fun <T> transaction(block: suspend (StoreTransaction) -> T): T =
         firestore.runTransaction { transaction ->
-            block(object : StoreTransaction {
-                override fun get(path: String) = transaction.get(firestore.document(path)).toRawDocument()
-                override fun set(path: String, data: Map<String, Any?>) {
-                    transaction.set(firestore.document(path), data.toFirestore())
-                }
-            })
+            // The SDK runs this function on its own background thread and expects the result
+            // synchronously; the block never really suspends here (get() below is blocking).
+            runBlocking {
+                block(object : StoreTransaction {
+                    override suspend fun get(path: String) = transaction.get(firestore.document(path)).toRawDocument()
+                    override fun set(path: String, data: Map<String, Any?>) {
+                        transaction.set(firestore.document(path), data.toFirestore())
+                    }
+                })
+            }
         }.await()
 
     private fun RawQuery.toFirestoreQuery(): Query {

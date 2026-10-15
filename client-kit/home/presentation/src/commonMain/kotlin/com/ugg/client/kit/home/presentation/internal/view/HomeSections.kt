@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -74,7 +76,6 @@ internal fun HomeHeader(cartCount: Int, onOpenCart: () -> Unit) {
 @Composable
 internal fun HeroSection(hero: HomeHero, onChooseModel: () -> Unit) {
     val colors = UggTheme.colors
-    val typography = UggTheme.typography
 
     UggPhotoPlaceholder(
         modifier = Modifier
@@ -94,38 +95,88 @@ internal fun HeroSection(hero: HomeHero, onChooseModel: () -> Unit) {
                 .fillMaxWidth(0.82f),
             contentDescription = hero.title,
         )
-        Column(
+        HeroCopy(
+            hero = hero,
+            onChooseModel = onChooseModel,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(UggTheme.spacing.l),
-            verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.xs),
-        ) {
-            Text(text = hero.kicker.uppercase(), style = typography.overline, color = colors.surfaceVariant)
-            Text(text = hero.title, style = typography.displayXL, color = colors.contentInverse)
-            Text(
-                text = hero.description,
-                style = typography.bodySmall,
-                color = colors.contentInverse.copy(alpha = 0.85f),
-            )
+        )
+    }
+}
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(text = hero.price, style = typography.price, color = colors.contentInverse)
-                    Text(
-                        text = hero.leadTime,
-                        style = typography.caption,
-                        color = colors.contentInverse.copy(alpha = 0.7f),
-                    )
-                }
+/**
+ * The hero of a wide window: the copy on the start half, the boots on the end half, instead of
+ * the photo stretched over the whole width.
+ */
+@Composable
+internal fun WideHeroSection(hero: HomeHero, onChooseModel: () -> Unit) {
+    val colors = UggTheme.colors
 
-                UggButton(text = "Выбрать", onClick = onChooseModel, style = UggButtonStyle.Light)
+    UggPhotoPlaceholder(
+        modifier = Modifier
+            .padding(horizontal = UggTheme.spacing.screenHorizontal, vertical = UggTheme.spacing.s)
+            .fillMaxWidth()
+            .height(520.dp)
+            .clickable(onClick = onChooseModel),
+        shape = UggTheme.shapes.extraLarge,
+        top = colors.surfaceVariant,
+        bottom = colors.surfaceInverse,
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                HeroCopy(
+                    hero = hero,
+                    onChooseModel = onChooseModel,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(UggTheme.spacing.xxl),
+                )
             }
+            Box(modifier = Modifier.weight(1f).fillMaxHeight().padding(UggTheme.spacing.xl)) {
+                UggProductImage(
+                    modifier = Modifier.align(Alignment.Center),
+                    contentDescription = hero.title,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HeroCopy(hero: HomeHero, onChooseModel: () -> Unit, modifier: Modifier = Modifier) {
+    val colors = UggTheme.colors
+    val typography = UggTheme.typography
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.xs),
+    ) {
+        Text(text = hero.kicker.uppercase(), style = typography.overline, color = colors.surfaceVariant)
+        Text(text = hero.title, style = typography.displayXL, color = colors.contentInverse)
+        Text(
+            text = hero.description,
+            style = typography.bodySmall,
+            color = colors.contentInverse.copy(alpha = 0.85f),
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = hero.price, style = typography.price, color = colors.contentInverse)
+                Text(
+                    text = hero.leadTime,
+                    style = typography.caption,
+                    color = colors.contentInverse.copy(alpha = 0.7f),
+                )
+            }
+
+            UggButton(text = "Выбрать", onClick = onChooseModel, style = UggButtonStyle.Light)
         }
     }
 }

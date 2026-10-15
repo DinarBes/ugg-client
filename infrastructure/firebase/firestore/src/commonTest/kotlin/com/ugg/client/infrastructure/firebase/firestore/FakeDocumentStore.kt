@@ -29,10 +29,10 @@ internal class FakeDocumentStore(initial: Map<String, Map<String, Any?>> = empty
 
     override fun newId(collection: String) = "id-${++ids}"
 
-    override suspend fun <T> transaction(block: (StoreTransaction) -> T): T {
+    override suspend fun <T> transaction(block: suspend (StoreTransaction) -> T): T {
         val writes = mutableMapOf<String, Map<String, Any?>>()
         val result = block(object : StoreTransaction {
-            override fun get(path: String) = read(path)
+            override suspend fun get(path: String) = read(path)
             override fun set(path: String, data: Map<String, Any?>) {
                 writes[path] = data.resolved()
             }

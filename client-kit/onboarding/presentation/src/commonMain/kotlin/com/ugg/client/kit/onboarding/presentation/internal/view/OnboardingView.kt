@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -81,8 +82,12 @@ internal fun OnboardingView(
                 ),
             ),
     ) {
+        // The gradient fills the whole window; the copy and the buttons keep a readable width in
+        // the middle of a wide one (on a phone the limit is never reached).
         Column(
             modifier = Modifier
+                .align(Alignment.TopCenter)
+                .widthIn(max = spacing.readableWidth)
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing),
         ) {

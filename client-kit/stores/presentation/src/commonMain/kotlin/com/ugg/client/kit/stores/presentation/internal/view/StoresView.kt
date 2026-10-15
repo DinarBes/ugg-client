@@ -2,6 +2,10 @@ package com.ugg.client.kit.stores.presentation.internal.view
 
 import com.ugg.client.kit.core.presentation.external.components.UggPullToRefreshBox
 import androidx.compose.foundation.background
+import androidx.window.core.layout.WindowSizeClass
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,8 +44,11 @@ import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 import com.ugg.client.kit.stores.domain.entities.Store
 import kotlinx.coroutines.launch
 
-/** Items above the first store card: header, map, city filter. */
+/** Items above the first store card in the single list: header, map, city filter. */
 private const val ITEMS_BEFORE_STORES = 3
+
+/** Items above the first store card in the start pane of a wide window: header, city filter. */
+private const val ITEMS_BEFORE_STORES_WIDE = 2
 
 @Composable
 internal fun StoresView(
@@ -64,6 +71,8 @@ internal fun StoresView(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val horizontal = UggTheme.spacing.screenHorizontal
+    val isExpanded = UggTheme.adaptiveInfo.windowSizeClass
+        .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     UggPullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -72,6 +81,40 @@ internal fun StoresView(
         indicatorPadding = PaddingValues(top = contentPadding.calculateTopPadding()),
     ) {
         when {
+            // Wide window: the list on the start pane, the map filling the end pane.
+            totalCount > 0 && isExpanded -> Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
+                    .padding(end = horizontal, top = UggTheme.spacing.s, bottom = horizontal),
+                horizontalArrangement = Arrangement.spacedBy(UggTheme.spacing.xs),
+            ) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.width(440.dp).fillMaxHeight(),
+                ) {
+                    item(key = "header") { Header() }
+                    item(key = "filter") {
+                        CityFilter(cities = cities, totalCount = totalCount, city = city, onSelect = onSelectCity)
+                    }
+                    storeCards(stores, selectedStoreId, onSelectStore, onRoute, onCall)
+                }
+
+                StoresMap(
+                    stores = stores,
+                    selectedStoreId = selectedStoreId,
+                    onStoreTap = { id ->
+                        onSelectStore(id)
+                        val index = stores.indexOfFirst { it.id == id }
+                        if (index >= 0) scope.launch { listState.animateScrollToItem(ITEMS_BEFORE_STORES_WIDE + index) }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(UggTheme.shapes.extraLarge),
+                )
+            }
+
             totalCount > 0 -> LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
@@ -100,18 +143,7 @@ internal fun StoresView(
                     CityFilter(cities = cities, totalCount = totalCount, city = city, onSelect = onSelectCity)
                 }
 
-                items(stores, key = { it.id }) { store ->
-                    StoreCard(
-                        store = store,
-                        isSelected = store.id == selectedStoreId,
-                        onClick = { onSelectStore(store.id) },
-                        onRoute = { onRoute(store) },
-                        onCall = { onCall(store) },
-                        modifier = Modifier.padding(horizontal = horizontal, vertical = UggTheme.spacing.xs),
-                    )
-                }
-
-                item(key = "bottom") { Spacer(Modifier.height(UggTheme.spacing.l)) }
+                storeCards(stores, selectedStoreId, onSelectStore, onRoute, onCall)
             }
 
             error != null -> Column(
@@ -133,6 +165,27 @@ internal fun StoresView(
             }
         }
     }
+}
+
+private fun LazyListScope.storeCards(
+    stores: List<Store>,
+    selectedStoreId: String?,
+    onSelectStore: (String?) -> Unit,
+    onRoute: (Store) -> Unit,
+    onCall: (Store) -> Unit,
+) {
+    items(stores, key = { it.id }) { store ->
+        StoreCard(
+            store = store,
+            isSelected = store.id == selectedStoreId,
+            onClick = { onSelectStore(store.id) },
+            onRoute = { onRoute(store) },
+            onCall = { onCall(store) },
+            modifier = Modifier.padding(horizontal = UggTheme.spacing.screenHorizontal, vertical = UggTheme.spacing.xs),
+        )
+    }
+
+    item(key = "bottom") { Spacer(Modifier.height(UggTheme.spacing.l)) }
 }
 
 @Composable

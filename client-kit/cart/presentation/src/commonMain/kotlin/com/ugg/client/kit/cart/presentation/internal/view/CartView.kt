@@ -1,6 +1,11 @@
 package com.ugg.client.kit.cart.presentation.internal.view
 
 import androidx.compose.foundation.background
+import com.ugg.client.kit.core.presentation.external.components.UggCenteredBox
+import androidx.window.core.layout.WindowSizeClass
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,6 +46,9 @@ internal fun CartView(
     isCheckingOut: Boolean = false,
     error: Throwable? = null,
 ) {
+    val isExpanded = UggTheme.adaptiveInfo.windowSizeClass
+        .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+
     Column(modifier = Modifier.fillMaxSize().background(UggTheme.colors.background)) {
         TopBar(subtitle = cart?.takeUnless { it.isEmpty }?.subtitle, onBack = onBack)
 
@@ -51,15 +59,42 @@ internal fun CartView(
 
             cart.isEmpty -> EmptyCart(onChooseModel = onChooseModel)
 
+            // Wide window: the order on the start pane, the totals and «Оформить заказ» kept in
+            // view on the end pane.
+            isExpanded -> UggCenteredBox(maxWidth = UggTheme.spacing.wideContentWidth) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(horizontal = UggTheme.spacing.screenHorizontal),
+                    horizontalArrangement = Arrangement.spacedBy(UggTheme.spacing.xl),
+                ) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                        contentPadding = PaddingValues(vertical = UggTheme.spacing.s),
+                        verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m),
+                    ) {
+                        cartItems(cart, onChangeQuantity, onAddExtra, onSelectDelivery, onGiftWrapChange)
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .width(380.dp)
+                            .padding(vertical = UggTheme.spacing.s),
+                        verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m),
+                    ) {
+                        SummaryCard(cart)
+                        CheckoutBar(onCheckout = onCheckout, isCheckingOut = isCheckingOut, error = error)
+                    }
+                }
+            }
+
             else -> {
-                CartContent(
-                    cart = cart,
-                    onChangeQuantity = onChangeQuantity,
-                    onAddExtra = onAddExtra,
-                    onSelectDelivery = onSelectDelivery,
-                    onGiftWrapChange = onGiftWrapChange,
-                    modifier = Modifier.weight(1f),
-                )
+                LazyColumn(
+                    modifier = Modifier.weight(1f).fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = UggTheme.spacing.screenHorizontal, vertical = UggTheme.spacing.s),
+                    verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m),
+                ) {
+                    cartItems(cart, onChangeQuantity, onAddExtra, onSelectDelivery, onGiftWrapChange)
+                    item(key = "summary") { SummaryCard(cart) }
+                }
                 CheckoutBar(onCheckout = onCheckout, isCheckingOut = isCheckingOut, error = error)
             }
         }
@@ -86,54 +121,45 @@ private fun TopBar(subtitle: String?, onBack: () -> Unit) {
     }
 }
 
-@Composable
-private fun CartContent(
+/** The order itself — lines, extras, delivery, gift wrap — shared by both layouts. */
+private fun LazyListScope.cartItems(
     cart: Cart,
     onChangeQuantity: (String, Int) -> Unit,
     onAddExtra: (String) -> Unit,
     onSelectDelivery: (String) -> Unit,
     onGiftWrapChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = UggTheme.spacing.screenHorizontal, vertical = UggTheme.spacing.s),
-        verticalArrangement = Arrangement.spacedBy(UggTheme.spacing.m),
-    ) {
-        items(cart.lines, key = { it.id }) { line ->
-            CartLineCard(line = line, onChangeQuantity = { delta -> onChangeQuantity(line.id, delta) })
-        }
+    items(cart.lines, key = { it.id }) { line ->
+        CartLineCard(line = line, onChangeQuantity = { delta -> onChangeQuantity(line.id, delta) })
+    }
 
-        if (cart.extras.isNotEmpty()) {
-            item(key = "extras") { ExtrasSection(extras = cart.extras, onAdd = onAddExtra) }
-        }
+    if (cart.extras.isNotEmpty()) {
+        item(key = "extras") { ExtrasSection(extras = cart.extras, onAdd = onAddExtra) }
+    }
 
-        item(key = "delivery-title") {
-            Text(
-                text = "Получение",
-                style = UggTheme.typography.displayM,
-                color = UggTheme.colors.content,
-                modifier = Modifier.padding(top = UggTheme.spacing.xs),
-            )
-        }
-        items(cart.deliveryOptions, key = { "delivery-${it.id}" }) { option ->
-            DeliveryOptionCard(
-                option = option,
-                isSelected = option.id == cart.selectedDeliveryId,
-                onClick = { onSelectDelivery(option.id) },
-            )
-        }
+    item(key = "delivery-title") {
+        Text(
+            text = "Получение",
+            style = UggTheme.typography.displayM,
+            color = UggTheme.colors.content,
+            modifier = Modifier.padding(top = UggTheme.spacing.xs),
+        )
+    }
+    items(cart.deliveryOptions, key = { "delivery-${it.id}" }) { option ->
+        DeliveryOptionCard(
+            option = option,
+            isSelected = option.id == cart.selectedDeliveryId,
+            onClick = { onSelectDelivery(option.id) },
+        )
+    }
 
-        item(key = "gift") {
-            GiftWrapRow(
-                title = cart.giftWrapTitle,
-                description = cart.giftWrapDescription,
-                isChecked = cart.isGiftWrapped,
-                onCheckedChange = onGiftWrapChange,
-            )
-        }
-
-        item(key = "summary") { SummaryCard(cart) }
+    item(key = "gift") {
+        GiftWrapRow(
+            title = cart.giftWrapTitle,
+            description = cart.giftWrapDescription,
+            isChecked = cart.isGiftWrapped,
+            onCheckedChange = onGiftWrapChange,
+        )
     }
 }
 
