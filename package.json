@@ -1,0 +1,9 @@
+{
+  "name": "ugg-client-tools",
+  "private": true,
+  "description": "Shortcuts for the web client. The app itself is built by Gradle.",
+  "scripts": {
+    "web:run": "./gradlew :webApp:wasmJsBrowserDevelopmentRun",
+    "deploy:web": "./gradlew :webApp:wasmJsBrowserDistribution && npx --yes firebase-tools deploy --only hosting"
+  }
+}
