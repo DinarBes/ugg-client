@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 
 class AddressFormViewModel(
     private val useCase: AddressesUseCase,
@@ -47,6 +50,17 @@ class AddressFormViewModel(
 
     fun onChange(transform: (Address) -> Address) = state.update { it.copy(address = transform(it.address), error = null) }
 
+    // One intent per field for the iOS client, which cannot pass a Kotlin lambda over the address.
+    fun onCityChange(city: String) = onChange { it.copy(city = city) }
+
+    fun onStreetChange(street: String) = onChange { it.copy(street = street) }
+
+    fun onFlatChange(flat: String) = onChange { it.copy(flat = flat) }
+
+    fun onCommentChange(comment: String) = onChange { it.copy(comment = comment) }
+
+    fun onDefaultChange(isDefault: Boolean) = onChange { it.copy(isDefault = isDefault) }
+
     fun onSave() {
         if (state.value.isSaving) return
         if (!state.value.isValid) {
@@ -77,3 +91,6 @@ class AddressFormViewModel(
         }
     }
 }
+
+@Suppress("unused")
+fun DI.addressFormViewModel(): AddressFormViewModel = this.direct.instance()

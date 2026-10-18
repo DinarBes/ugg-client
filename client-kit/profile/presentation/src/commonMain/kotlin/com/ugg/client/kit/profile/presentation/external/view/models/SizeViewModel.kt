@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 
 /** «24,5» at most: digits and one comma or dot. */
 private const val FOOT_LENGTH_MAX_CHARS = 4
@@ -90,3 +93,6 @@ private fun Double.toInput(): String {
     val tenths = kotlin.math.round(this * 10).toLong()
     return if (tenths % 10 == 0L) "${tenths / 10}" else "${tenths / 10},${tenths % 10}"
 }
+
+@Suppress("unused")
+fun DI.sizeViewModel(): SizeViewModel = this.direct.instance()

@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 
 /** Max length of the name; longer input is cut while typing. */
 internal const val PROFILE_NAME_MAX_LENGTH = 40
@@ -51,3 +54,6 @@ class NameViewModel(
         }
     }
 }
+
+@Suppress("unused")
+fun DI.nameViewModel(): NameViewModel = this.direct.instance()

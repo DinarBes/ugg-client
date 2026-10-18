@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 
 class AddressesViewModel(
     private val useCase: AddressesUseCase,
@@ -62,3 +65,6 @@ class AddressesViewModel(
 
     fun onOpen(id: String) = navigationContext.tryNavigate(ProfileFlow.AddressForm(addressId = id))
 }
+
+@Suppress("unused")
+fun DI.addressesViewModel(): AddressesViewModel = this.direct.instance()

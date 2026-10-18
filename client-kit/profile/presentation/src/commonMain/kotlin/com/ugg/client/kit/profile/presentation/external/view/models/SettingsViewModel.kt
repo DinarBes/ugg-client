@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 
 class SettingsViewModel(
     private val useCase: SettingsUseCase,
@@ -81,3 +84,6 @@ class SettingsViewModel(
 
     fun onDismissError() = state.update { it.copy(error = null) }
 }
+
+@Suppress("unused")
+fun DI.settingsViewModel(): SettingsViewModel = this.direct.instance()
