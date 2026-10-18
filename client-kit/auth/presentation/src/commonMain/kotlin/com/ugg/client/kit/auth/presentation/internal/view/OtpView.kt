@@ -1,5 +1,7 @@
 package com.ugg.client.kit.auth.presentation.internal.view
 
+import com.ugg.client.kit.auth.presentation.external.view.models.OTP_LENGTH
+
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -52,7 +54,6 @@ import com.ugg.client.kit.core.presentation.external.icons.UggIcons
 import com.ugg.client.kit.core.presentation.external.theme.UggTheme
 import kotlinx.coroutines.delay
 
-internal const val OTP_LENGTH = 6
 private const val RESEND_DELAY_SECONDS = 60
 
 @OptIn(ExperimentalLayoutApi::class)

@@ -33,6 +33,18 @@ class InitiateViewModel(
     fun onStateChange(new: InitiateState) = state.update { new }
 
     /**
+     * The field edits the ten digits after «+7»; the state keeps the full number the backend
+     * expects. Anything but digits is dropped, the excess cut off. iOS binds its field to this.
+     */
+    fun onNationalNumberChange(digits: String) = state.update {
+        val typed = digits.filter(Char::isDigit)
+        // A pasted or autofilled full number («+7 900…», «8 900…») arrives with the trunk digit.
+        val national = (if (typed.length > NATIONAL_NUMBER_LENGTH && typed.first() in "78") typed.drop(1) else typed)
+            .take(NATIONAL_NUMBER_LENGTH)
+        it.copy(phone = if (national.isEmpty()) "" else COUNTRY_CODE + national, error = null)
+    }
+
+    /**
      * A clean phone step. ViewModels are shared per type and outlive the screen, so without this
      * the number typed before signing out would still be in the field next time.
      */
@@ -52,6 +64,10 @@ class InitiateViewModel(
         }
     }
 }
+
+/** Russian numbers only for now: the user types the ten digits after «+7». */
+const val COUNTRY_CODE = "+7"
+const val NATIONAL_NUMBER_LENGTH = 10
 
 @Suppress("unused")
 fun DI.initiateViewModel(): InitiateViewModel = this.direct.instance()

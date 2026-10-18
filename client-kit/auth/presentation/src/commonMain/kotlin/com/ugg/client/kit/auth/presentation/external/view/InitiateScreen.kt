@@ -7,12 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.ugg.client.kit.auth.presentation.external.view.models.COUNTRY_CODE
 import com.ugg.client.kit.auth.presentation.external.view.models.InitiateViewModel
 import com.ugg.client.kit.auth.presentation.internal.view.InitiateView
 import org.kodein.di.compose.viewmodel.rememberViewModel
 
-/** Russian numbers only for now: the user types the ten digits after «+7». */
-private const val COUNTRY_CODE = "+7"
 
 /**
  * Phone number step of the sign-in.
@@ -47,9 +46,7 @@ fun InitiateScreen(
         countryCode = COUNTRY_CODE,
         error = state.error,
         isLoading = state.isLoading,
-        onNationalNumberChanged = { digits ->
-            viewModel.onStateChange(state.copy(phone = if (digits.isEmpty()) "" else COUNTRY_CODE + digits, error = null))
-        },
+        onNationalNumberChanged = viewModel::onNationalNumberChange,
         onSubmit = { viewModel.onSubmit() },
         onBack = onBack,
         onSkip = onSkip,

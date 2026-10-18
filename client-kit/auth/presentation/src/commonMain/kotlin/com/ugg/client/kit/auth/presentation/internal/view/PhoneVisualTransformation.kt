@@ -1,11 +1,12 @@
 package com.ugg.client.kit.auth.presentation.internal.view
 
+import com.ugg.client.kit.auth.presentation.external.view.models.NATIONAL_NUMBER_LENGTH
+
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 
-internal const val NATIONAL_NUMBER_LENGTH = 10
 
 /**
  * Shows ten raw digits as «900 123-45-67» while the field keeps only the digits. A separator

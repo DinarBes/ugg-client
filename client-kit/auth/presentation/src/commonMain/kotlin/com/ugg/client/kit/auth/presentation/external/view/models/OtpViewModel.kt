@@ -29,6 +29,17 @@ class OtpViewModel(
 
     fun onStateChange(new: OtpState) = state.update { new }
 
+    /**
+     * Digits only, at most [OTP_LENGTH]; the last digit submits by itself — no reason to make the
+     * user reach for the button. iOS binds its field to this.
+     */
+    fun onOtpChange(otp: String, sessionId: String) {
+        val code = otp.filter(Char::isDigit).take(OTP_LENGTH)
+        state.update { it.copy(otp = code, error = null) }
+
+        if (code.length == OTP_LENGTH && !state.value.isLoading) onSubmit(sessionId)
+    }
+
     /** A clean code step for a new number: no digits, no error, no session of the previous attempt. */
     fun reset() = state.update { OtpState() }
 
@@ -59,6 +70,8 @@ class OtpViewModel(
         }
     }
 }
+
+const val OTP_LENGTH = 6
 
 @Suppress("unused")
 fun DI.otpViewModel(): OtpViewModel = this.direct.instance()

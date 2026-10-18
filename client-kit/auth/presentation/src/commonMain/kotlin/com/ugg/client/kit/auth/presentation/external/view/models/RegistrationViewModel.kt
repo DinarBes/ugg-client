@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.kodein.di.instance
+import org.kodein.di.direct
+import org.kodein.di.DI
 
 /** Max length of the name; longer input is cut while typing. */
 internal const val NAME_MAX_LENGTH = 40
@@ -46,3 +49,6 @@ class RegistrationViewModel(
 
     fun onSkip() = navigationContext.back()
 }
+
+@Suppress("unused")
+fun DI.registrationViewModel(): RegistrationViewModel = this.direct.instance()

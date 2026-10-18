@@ -1,5 +1,7 @@
 package com.ugg.client.kit.auth.presentation.internal.view
 
+import com.ugg.client.kit.auth.presentation.external.view.models.NATIONAL_NUMBER_LENGTH
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

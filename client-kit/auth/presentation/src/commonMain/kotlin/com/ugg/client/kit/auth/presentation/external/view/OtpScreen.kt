@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.ugg.client.kit.auth.presentation.external.view.models.OtpViewModel
-import com.ugg.client.kit.auth.presentation.internal.view.OTP_LENGTH
 import com.ugg.client.kit.auth.presentation.internal.view.OtpView
 import org.kodein.di.compose.viewmodel.rememberViewModel
 
@@ -44,12 +43,8 @@ fun OtpScreen(
         isLoading = state.isLoading,
         isResending = state.isResending,
         resendCount = state.resendCount,
-        onOtpChanged = { otp ->
-            viewModel.onStateChange(state.copy(otp = otp, error = null))
-
-            // The last digit submits by itself — no reason to make the user reach for the button.
-            if (otp.length == OTP_LENGTH && !state.isLoading) viewModel.onSubmit(sessionId)
-        },
+        // The last digit submits by itself (in the ViewModel, shared with iOS).
+        onOtpChanged = { otp -> viewModel.onOtpChange(otp, sessionId) },
         onSubmit = { viewModel.onSubmit(sessionId) },
         onResend = { viewModel.resend(phone) },
         onBack = onBack,
