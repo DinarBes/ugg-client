@@ -5,6 +5,7 @@ import androidx.compose.ui.window.ComposeViewport
 import com.ugg.client.infrastructure.firebase.auth.initializeFirebaseWeb
 import com.ugg.client.kit.core.domain.AppEnvironment
 import com.ugg.client.kit.core.domain.AppInfo
+import com.ugg.client.kit.stores.presentation.external.maps.StoresMapWeb
 import com.ugg.client.shared.ContentView
 import com.ugg.client.shared.TemplateApp
 import kotlinx.browser.document
@@ -30,6 +31,9 @@ fun main() {
         messagingSenderId = FirebaseWebConfig.MESSAGING_SENDER_ID,
         appId = FirebaseWebConfig.APP_ID,
     )
+
+    // The stores map; without the key it shows a link to Yandex Maps instead.
+    StoresMapWeb.initialize(WebKeys.YANDEX_JS_API_KEY)
 
     val app = TemplateApp {
         environment = AppEnvironment.PRODUCTION

@@ -24,5 +24,10 @@ kotlin {
             // api: StoresMapKit.initialize is called from androidApp, which only sees this module.
             api(libs.maps.mobile)
         }
+
+        // Yandex Maps JS API v3 inside the page: DOM access for the map container.
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
+        }
     }
 }
