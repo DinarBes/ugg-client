@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 
 class CareViewModel(
     private val useCase: CareUseCase,
@@ -34,3 +37,6 @@ class CareViewModel(
         state.update { it.copy(care = care, isLoading = false) }
     }
 }
+
+@Suppress("unused")
+fun DI.careViewModel(): CareViewModel = this.direct.instance()
