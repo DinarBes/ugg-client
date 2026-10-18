@@ -8,7 +8,7 @@ import com.ugg.client.infrastructure.firebase.firestore.services.FirestoreUserSe
 import com.ugg.client.infrastructure.firebase.firestore.services.OrderService
 import com.ugg.client.infrastructure.firebase.firestore.services.UserService
 
-/** Firestore on Android; on iOS every request fails with `Unavailable` for now. */
+/** Firestore SDK on Android, the JS SDK on the web, the iOS SDK through `IosFirestore` on iOS. */
 internal expect fun createDocumentStore(): DocumentStore
 
 fun createCatalogService(): CatalogService = FirestoreCatalogService(createDocumentStore())

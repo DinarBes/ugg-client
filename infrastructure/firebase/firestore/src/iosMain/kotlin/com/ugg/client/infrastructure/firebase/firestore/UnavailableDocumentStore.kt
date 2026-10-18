@@ -7,11 +7,10 @@ import com.ugg.client.infrastructure.firebase.firestore.internal.StoreTransactio
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-// TODO: back this with the Firebase iOS SDK (through a Swift implementation handed to TemplateApp)
-// once the iOS app is in the repository, the same way as the phone sign-in.
-internal actual fun createDocumentStore(): DocumentStore = UnavailableDocumentStore()
-
-/** Every request fails with `Unavailable`; the app shows its error state. */
+/**
+ * Until the iOS app sets [IosFirestore.bridge] (or in a host without Firebase): every request
+ * fails with `Unavailable`, and the app shows its error state.
+ */
 internal class UnavailableDocumentStore : DocumentStore {
     override suspend fun get(path: String): RawDocument? = unavailable()
     override suspend fun query(query: RawQuery): List<RawDocument> = unavailable()

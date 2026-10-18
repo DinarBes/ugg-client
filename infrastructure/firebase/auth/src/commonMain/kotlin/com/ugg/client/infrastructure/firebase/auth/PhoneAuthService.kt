@@ -29,5 +29,5 @@ interface PhoneAuthService {
     suspend fun deleteAccount()
 }
 
-/** Platform implementation: Firebase on Android, a stub on iOS until the iOS app wires Firebase. */
+/** Platform implementation: the Firebase SDK on Android and the web, the iOS SDK through `IosPhoneAuth` on iOS. */
 expect fun createPhoneAuthService(): PhoneAuthService
